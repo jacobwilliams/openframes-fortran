@@ -32,7 +32,7 @@
 
 ! note: look at using c_ptr for strings ...
 
-    module openframes
+    module openframes_module
 
     use, intrinsic :: iso_c_binding
     use, intrinsic :: iso_fortran_env
@@ -2997,5 +2997,5 @@
     end function c_logical_to_fortran
 
 !****************************************************************************************************
-    end module openframes
+    end module openframes_module
 !****************************************************************************************************
