@@ -25,10 +25,6 @@
 !   See the License for the specific language governing permissions and
 !   limitations under the License.
 !```
-!
-!### Notes
-!  Note that lines starting with "!DEC$" are compiler directives for
-!  the Visual Fortran family of compilers, and should not be messed with.
 
 ! note: look at using c_ptr for strings ...
 

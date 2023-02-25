@@ -4,12 +4,19 @@
 !
 !### Author
 !  * Jacob Williams, 9/9/2018
+!
+!### Notes
+!  Note that lines starting with "!DEC$" are compiler directives for
+!  the Intel Fortran family of compilers, and should not be messed with.
+
 
     module openframes_c_interface
 
     use, intrinsic :: iso_c_binding
 
     implicit none
+
+    public
 
     abstract interface
 
@@ -106,7 +113,7 @@
         integer(c_int), intent(out) :: val
         end subroutine of_getreturnedvalue_c
 
-        subroutine of_adddatafilepath_c(newpath)
+        subroutine of_adddatafilepath_c(newpath) bind(c,name='of_adddatafilepath')
         !dec$ attributes dllimport,c,reference :: of_adddatafilepath
         import
         implicit none
