@@ -9,6 +9,9 @@
 !  Note that lines starting with "!DEC$" are compiler directives for
 !  the Intel Fortran family of compilers, and should not be messed with.
 
+!  TODO: should they all have `!dec$ attributes dllimport,c,reference`?
+!  TODO: add compiler directives for platforms (these are not used on linux, for example).
+!  TODO: what about for gfortran?
 
     module openframes_c_interface
 
@@ -127,6 +130,13 @@
         integer(c_int), intent(in) :: id
         end subroutine ofwin_activate_c
 
+        subroutine ofwin_getid_c(id) bind(c,name='ofwin_getid')
+        !DEC$ ATTRIBUTES DLLIMPORT :: ofwin_getid
+        import
+        implicit none
+        integer(c_int), intent(out) :: id
+        end subroutine ofwin_getid_c
+
         subroutine ofwin_createproxy_c(x, y, width, height, nrow, ncol, embedded, id, usevr) &
             bind(c,name='ofwin_createproxy')
         !DEC$ ATTRIBUTES DLLIMPORT :: ofwin_createproxy
@@ -195,6 +205,12 @@
         import
         implicit none
         end subroutine ofwin_waitforstop_c
+
+        subroutine ofwin_signalstop_c() bind(c,name='ofwin_signalstop')
+        !DEC$ ATTRIBUTES DLLIMPORT :: ofwin_signalstop
+        import
+        implicit none
+        end subroutine ofwin_signalstop_c
 
         subroutine ofwin_pauseanimation_c(pause) bind(c,name='ofwin_pauseanimation')
         !DEC$ ATTRIBUTES DLLIMPORT :: ofwin_pauseanimation
@@ -625,6 +641,20 @@
         character(kind=c_char,len=1), dimension(*), intent(in) :: name
         end subroutine offrame_setnamelabel_c
 
+        subroutine offrame_setlabelfont_c(font) bind(c,name='offrame_setlabelfont')
+        !DEC$ ATTRIBUTES DLLIMPORT :: offrame_setlabelfont
+        import
+        implicit none
+        character(kind=c_char,len=1), dimension(*), intent(in) :: font
+        end subroutine offrame_setlabelfont_c
+
+        subroutine offrame_setlabelsize_c(font) bind(c,name='offrame_setlabelsize')
+        !DEC$ ATTRIBUTES DLLIMPORT :: offrame_setlabelsize
+        import
+        implicit none
+        integer(c_int), intent(in) :: font
+        end subroutine offrame_setlabelsize_c
+
         subroutine offrame_setaxeslabels_c(xlabel, ylabel, zlabel) bind(c,name='offrame_setaxeslabels')
         !DEC$ ATTRIBUTES DLLIMPORT :: offrame_setaxeslabels
         import
@@ -913,6 +943,13 @@
         implicit none
         real(c_double), intent(in) :: len
         end subroutine ofcoordaxes_setaxislength_c
+
+        subroutine ofcoordaxes_setaxiswidth_c(width) bind(c,name='ofcoordaxes_setaxiswidth')
+        !DEC$ ATTRIBUTES DLLIMPORT :: ofcoordaxes_setaxiswidth
+        import
+        implicit none
+        real(c_float), intent(in) :: width
+        end subroutine ofcoordaxes_setaxiswidth_c
 
         subroutine ofcoordaxes_setdrawaxes_c(axes) bind(c,name='ofcoordaxes_setdrawaxes')
         !DEC$ ATTRIBUTES DLLIMPORT :: ofcoordaxes_setdrawaxes
