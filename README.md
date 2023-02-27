@@ -1,7 +1,7 @@
 ![openframes-fortran](media/logo.png)
 ============
 
-Modern Fortran interface to the [OpenFrames](https://github.com/ravidavi/OpenFrames) realtime interactive scientific visualization API.
+Modern Fortran interface to the [OpenFrames](https://github.com/ravidavi/OpenFrames) realtime interactive scientific visualization API. OpenFrames is an opensource library used by NASA's spacecraft trajectory tools [Copernicus](https://www.nasa.gov/centers/johnson/copernicus/index.html) and [GMAT](https://sourceforge.net/projects/gmat/).
 
 ### Description
 
@@ -24,4 +24,6 @@ openframes-fortran = { git="https://github.com/jacobwilliams/openframes-fortran.
 Note that you will also need to link with the OpenFrames and OpenSceneGraph libraries.
 
 ### See also
- * [OpenFrames](https://github.com/ravidavi/OpenFrames)
+ * [OpenFrames](https://github.com/ravidavi/OpenFrames) [GitHub]
+ * [OpenFrames Wiki](https://sourceforge.net/p/openframes/wiki/Home/) [Sourceforge]
+ * [openframes-python-example](https://gitlab.com/EmergentSpaceTechnologies/openframes-python-example)
