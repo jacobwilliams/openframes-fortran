@@ -11,7 +11,7 @@ predocmark: <
 docmark_alt:
 docmark: !
 display: public
-source: true
+source: false
 graph: false
 search: true
 preprocessor: gfortran -E

@@ -2,12 +2,6 @@
 !>
 !  Modern Fortran interface module to the OpenFrames C interface.
 !
-!### Author
-!  * Jacob Williams, 9/9/2018 : based on the original OpenFrames
-!                               module by Ravishankar Mathur. These
-!                               modifications are released under the
-!                               same license (Apache 2.0).
-!
 !  All functions have a prefix indicating what they operate on:
 !
 !  * `ofwin:` Acts on the currently active WindowProxy
@@ -23,6 +17,12 @@
 !
 !  In addition, some functions produce integer results. These values
 !  can be obtained by calling [[of_getreturnedvalue]].
+!
+!### Author
+!  * Jacob Williams, 9/9/2018 : based on the original OpenFrames
+!                               module by Ravishankar Mathur. These
+!                               modifications are released under the
+!                               same license (Apache 2.0).
 
     module openframes_module
 
@@ -849,56 +849,112 @@
     call ofwin_selectview_c(to_c(row), to_c(col))
     end subroutine ofwin_selectview
 
+!****************************************************************************************************
+!>
+!  Set a callback function for swapping the front/back buffers.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_setswapbuffersfunction(fcn)
-    procedure(swapbuffersfunction) :: fcn
+    procedure(swapbuffersfunction) :: fcn !! Callback function to be called.
     call ofwin_setswapbuffersfunction_c(fcn)
     end subroutine ofwin_setswapbuffersfunction
 
+!****************************************************************************************************
+!>
+!  Set a callback function for making the OpenGL context current (so it can be drawn on).
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_setmakecurrentfunction(fcn)
-    procedure(makecurrentfunction) :: fcn
+    procedure(makecurrentfunction) :: fcn !! Callback function to be called.
     call ofwin_setmakecurrentfunction_c(fcn)
     end subroutine ofwin_setmakecurrentfunction
 
+!****************************************************************************************************
+!>
+!  Set a callback function for updating the OpenGL context after qualifying events.
+!
+!  Currently this includes resize.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_setupdatecontextfunction(fcn)
-    procedure(updatecontextfunction) :: fcn
+    procedure(updatecontextfunction) :: fcn !! Callback function to be called.
     call ofwin_setupdatecontextfunction_c(fcn)
     end subroutine ofwin_setupdatecontextfunction
 
+!****************************************************************************************************
+!>
+!  Resize the window to a new position and size.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_resizewindow(x, y, width, height)
-    integer(int32), intent(in) :: x
-    integer(int32), intent(in) :: y
-    integer(int32), intent(in) :: width
-    integer(int32), intent(in) :: height
+    integer(int32), intent(in) :: x !! X-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: y !! Y-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: width !! Width of the window (in pixels).
+    integer(int32), intent(in) :: height !! Height of the window (in pixels).
     call ofwin_resizewindow_c(to_c(x), to_c(y), to_c(width), to_c(height))
     end subroutine ofwin_resizewindow
 
+!****************************************************************************************************
+!>
+!  Create a key-pressed event.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_keypress(key)
-    integer(int32), intent(in) :: key
+    integer(int32), intent(in) :: key !! Key pressed (see osg::GUIEventAdapter::KeySymbol enum).
     call ofwin_keypress_c(to_c(key))
     end subroutine ofwin_keypress
 
+!****************************************************************************************************
+!>
+!  Create a key released event.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_keyrelease(key)
-    integer(int32), intent(in) :: key
+    integer(int32), intent(in) :: key !! Key released (see osg::GUIEventAdapter::KeySymbol enum).
     call ofwin_keyrelease_c(to_c(key))
     end subroutine ofwin_keyrelease
 
+!****************************************************************************************************
+!>
+!  Create a mouse button pressed event.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_buttonpress(x, y, button)
-    real(real32), intent(in) :: x
-    real(real32), intent(in) :: y
-    integer(int32), intent(in) :: button
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
+    integer(int32), intent(in) :: button !! Mouse button pressed. Button numbering is 1 for left mouse button, 2 for middle, 3 for right.
     call ofwin_buttonpress_c(to_c(x), to_c(y), to_c(button))
     end subroutine ofwin_buttonpress
 
+!****************************************************************************************************
+!>
+!  Create a mouse button released event.
+!
+!  This applies to the current active WindowProxy.
+!
     subroutine ofwin_buttonrelease(x, y, button)
-    real(real32), intent(in) :: x
-    real(real32), intent(in) :: y
-    integer(int32), intent(in) :: button
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
+    integer(int32), intent(in) :: button !! Mouse button released. Button numbering is 1 for left mouse button, 2 for middle, 3 for right.
     call ofwin_buttonrelease_c(to_c(x), to_c(y), to_c(button))
     end subroutine ofwin_buttonrelease
 
+!****************************************************************************************************
+!>
+!  Create a mouse-moved event.
+!
+!  This applies to the current active WindowProxy.
+
     subroutine ofwin_mousemotion(x, y)
-    real(real32), intent(in) :: x
-    real(real32), intent(in) :: y
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
     call ofwin_mousemotion_c(to_c(x), to_c(y))
     end subroutine ofwin_mousemotion
 
@@ -1143,9 +1199,9 @@
 !
 !  This applies to the current active ReferenceFrame.
 !  The axis is initially drawn at the origin of the reference frame unless otherwise
-!  specified by offrame_movexaxis(), offrame_moveyaxis() or offrame_movezaxis().
+!  specified by [[offrame_movexaxis]], [[offrame_moveyaxis]] or [[offrame_movezaxis]].
 !
-!  To show multiple axis components, sum the enumerations of OpenFrames::ReferenceFrame::AxesType you want to show.
+!  To show multiple axis components, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
 
     subroutine offrame_showaxes(axes)
     integer(int32), intent(in) :: axes !! Axis components to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
@@ -1169,9 +1225,9 @@
 !
 !  This applies to the current active ReferenceFrame.
 !  The axis is initially drawn at the origin of the reference frame unless otherwise
-!  specified by offrame_movexaxis(), offrame_moveyaxis() or offrame_movezaxis().
+!  specified by [[offrame_movexaxis]], [[offrame_moveyaxis]] or [[offrame_movezaxis]].
 !
-!  To show multiple axis labels, sum the enumerations of OpenFrames::ReferenceFrame::AxesType you want to show.
+!  To show multiple axis labels, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
 
     subroutine offrame_showaxeslabels(labels)
     integer(int32), intent(in) :: labels !! Axis labels to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
@@ -1194,7 +1250,6 @@
 !****************************************************************************************************
 !>
 !  Change the axes labels for the current ReferenceFrame.
-!  Note- Intel Fortran passes string lengths after all arguments.
 !
 !  This applies to the current active ReferenceFrame.
 
@@ -1206,7 +1261,7 @@
     end subroutine offrame_setaxeslabels
 
 !****************************************************************************************************
-!
+!>
 !  Set the label font for the current ReferenceFrame.
 !
 !  This applies to the current active ReferenceFrame.
@@ -1217,7 +1272,7 @@
     end subroutine offrame_setlabelfont
 
 !****************************************************************************************************
-!
+!>
 !  Set the label size for the current ReferenceFrame.
 !
 !  This applies to the current active ReferenceFrame.
@@ -1231,7 +1286,7 @@
 !>
 !  Reposition and resize the x component of the coordinate axis.
 !
-!  Make sure that offrame_showaxes() is configured to display this axis.
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
 !
 !  This applies to the current active ReferenceFrame.
 
@@ -1248,7 +1303,7 @@
 !>
 !  Reposition and resize the y component of the coordinate axis.
 !
-!  Make sure that offrame_showaxes() is configured to display this axis.
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
 !
 !  This applies to the current active ReferenceFrame.
 
@@ -1265,7 +1320,7 @@
 !>
 !  Reposition and resize the z component of the coordinate axis.
 !
-!  Make sure that offrame_showaxes() is configured to display this axis.
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
 !
 !  This applies to the current active ReferenceFrame.
 
@@ -1345,7 +1400,7 @@
 !>
 !  Have this frame follow the specified trajectory.
 !
-!  The name used is the one used in the trajecotries creation in oftraj_create().
+!  The name used is the one used in the trajectories creation in [[oftraj_create]].
 !
 !  This applies to the current active ReferenceFrame.
 !
@@ -1358,13 +1413,13 @@
 !>
 !  Follow the trajectory's position, attitude, or both, and set the follow mode.
 !
-!  The function offrame_followtrajectory() must be called before this function.
+!  The function [[offrame_followtrajectory]] must be called before this function.
 !
 !  This applies to the current active ReferenceFrame.
 !
     subroutine offrame_followtype(data, mode)
-    integer(int32), intent(in) :: data !! Set whether to follow position and/or velocity (see OpenFrames::TrajectoryFollower::FollowData).
-    integer(int32), intent(in) :: mode !! Set the follow mode to loop repeatedly or to limit to the times added to the trajectory (see OpenFrames::TrajectoryFollower::FollowMode).
+    integer(int32), intent(in) :: data !! Set whether to follow position and/or velocity (see `OpenFrames::TrajectoryFollower::FollowData`).
+    integer(int32), intent(in) :: mode !! Set the follow mode to loop repeatedly or to limit to the times added to the trajectory (see `OpenFrames::TrajectoryFollower::FollowMode`).
     call offrame_followtype_c(to_c(data), to_c(mode))
     end subroutine offrame_followtype
 
@@ -1374,12 +1429,12 @@
 !
 !  Each of src, element, opt, and scale must be 3-element arrays, with one element for each x/y/z source.
 !
-!  The function offrame_followtrajectory() must be called before this function.
+!  The function [[offrame_followtrajectory]] must be called before this function.
 !
 !  This applies to the current active ReferenceFrame.
 
     subroutine offrame_followposition(src, element, opt, scale)
-    integer(int32), dimension(3), intent(in) :: src !! Set data source for each axis (see OpenFrames::Trajectory::SourceType).
+    integer(int32), dimension(3), intent(in) :: src !! Set data source for each axis (see `OpenFrames::Trajectory::SourceType`).
     integer(int32), dimension(3), intent(in) :: element !! Set which element to follow.
     integer(int32), dimension(3), intent(in) :: opt !! Set which optional to follow.
     real(real64), dimension(3), intent(in) :: scale !! Set the scale for each axis.
@@ -1397,16 +1452,17 @@
     end subroutine offrame_printframestring
 
     ! Sphere functions
-    ! A Sphere is a type of ReferenceFrame, so all the above ReferenceFrame
-    ! functions also apply to a Sphere.  In addition, to operate on a Sphere
-    ! you must first set it as the currently active ReferenceFrame by using
-    ! offrame_activate() (just like for any other ReferenceFrame).
 
 !****************************************************************************************************
 !>
 !  Create a new Sphere with the given name.
 !
 !  This new Sphere will also become the current active one.
+!
+!@note A Sphere is a type of ReferenceFrame, so all the above ReferenceFrame
+!      functions also apply to a Sphere.  In addition, to operate on a Sphere
+!      you must first set it as the currently active ReferenceFrame by using
+!      [[offrame_activate]] (just like for any other ReferenceFrame).
 
     subroutine ofsphere_create(name)
     character(len=*), intent(in) :: name !! Name of the sphere to create.
@@ -1707,17 +1763,17 @@
 
     ! DrawableTrajectory functions
 
-    !****************************************************************************************************
-    !>
-    !  Create a new DrawableTrajectory with the given name.
-    !
-    !  This new DrawableTrajectory will also become the current active one.
-    !
-    !@note A DrawableTrajectory allows a TrajectoryArtist to do its drawing.
-    !      A DrawableTrajectory is a type of ReferenceFrame, so all the above ReferenceFrame
-    !      functions also apply to it.  In addition, to operate on a DrawableTrajectory
-    !      you must first set it as the currently active ReferenceFrame by using
-    !      offrame_activate() (just like for any other ReferenceFrame).
+!****************************************************************************************************
+!>
+!  Create a new DrawableTrajectory with the given name.
+!
+!  This new DrawableTrajectory will also become the current active one.
+!
+!@note A DrawableTrajectory allows a TrajectoryArtist to do its drawing.
+!      A DrawableTrajectory is a type of ReferenceFrame, so all the above ReferenceFrame
+!      functions also apply to it.  In addition, to operate on a DrawableTrajectory
+!      you must first set it as the currently active ReferenceFrame by using
+!      [[offrame_activate]] (just like for any other ReferenceFrame).
 
     subroutine ofdrawtraj_create(name)
     character(len=*), intent(in) :: name !! Name of the drawable trajectory to create.
@@ -1802,12 +1858,12 @@
 !>
 !  Sets which axis to draw.
 !
-!  To show multiple axis components, sum the enumerations of OpenFrames::ReferenceFrame::AxesType you want to show.
+!  To show multiple axis components, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
 !
 !  This applies to the current active CoordinateAxes.
 !
     subroutine ofcoordaxes_setdrawaxes(axes)
-    integer(int32), intent(in) :: axes !! Axis components to show specified by OpenFrames::ReferenceFrame::AxesType, others will be hidden.
+    integer(int32), intent(in) :: axes !! Axis components to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
     call ofcoordaxes_setdrawaxes_c(to_c(axes))
     end subroutine ofcoordaxes_setdrawaxes
 
@@ -2005,7 +2061,7 @@
 !
 !  This applies to the current active Trajectory.
 !
-!  Future positions/attitudes/optionals added to this trajectory will correspond to this time until a new call to oftraj_addtime().
+!  Future positions/attitudes/optionals added to this trajectory will correspond to this time until a new call to [[oftraj_addtime]].
 
     subroutine oftraj_addtime(t)
     real(real64), intent(in) :: t !! Time.
@@ -2038,7 +2094,7 @@
 !
 !  This applies to the current active Trajectory.
 !
-!  This position corresponds to the most recent time provided by oftraj_addtime().
+!  This position corresponds to the most recent time provided by [[oftraj_addtime]].
 
     subroutine oftraj_addpositionvec(pos)
     real(real64), dimension(:), intent(in) :: pos !! Position array to add (length 3).
@@ -2079,7 +2135,7 @@
 !  This applies to the current active Trajectory.
 !  The index must be in the range [0, num optionals - 1].
 !
-!  This optional corresponds to the most recent time provided by oftraj_addtime().
+!  This optional corresponds to the most recent time provided by [[oftraj_addtime]].
 
     subroutine oftraj_setoptional(index, x, y, z)
     integer(int32), intent(in) :: index !! index of optional to add values to.
@@ -2096,7 +2152,7 @@
 !  This applies to the current active Trajectory.
 !  Here the optional is given as a 2 or 3 element vector.
 !
-!  This optional corresponds to the most recent time provided by oftraj_addtime().
+!  This optional corresponds to the most recent time provided by [[oftraj_addtime]].
 
     subroutine oftraj_setoptionalvec(index, opt)
     integer(int32), intent(in) :: index !! index of optional to add values to.
@@ -2138,7 +2194,7 @@
 
     subroutine oftraj_autoinformartists(autoinform)
     logical, intent(in) :: autoinform !! True to auto-inform linked artists when data is added to this trajectory.
-                                      !! False to not inform  artists unless oftraj_autoinformartists() is called.
+                                      !! False to not inform  artists unless [[oftraj_autoinformartists]] is called.
     call oftraj_autoinformartists_c(to_c(autoinform))
     end subroutine oftraj_autoinformartists
 
@@ -2191,7 +2247,7 @@
 !  This applies to the current active CurveArtist.
 
     subroutine ofcurveartist_setxdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2206,7 +2262,7 @@
 !  This applies to the current active CurveArtist.
 
     subroutine ofcurveartist_setydata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2221,7 +2277,7 @@
 !  This applies to the current active CurveArtist.
 
     subroutine ofcurveartist_setzdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2292,7 +2348,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setstartxdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2307,7 +2363,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setstartydata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2322,7 +2378,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setstartzdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2337,7 +2393,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setendxdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2352,7 +2408,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setendydata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2367,7 +2423,7 @@
 !  This applies to the current active SegmentArtist.
 
     subroutine ofsegmentartist_setendzdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2414,7 +2470,7 @@
 !>
 !  Set the line pattern of the current segment artist.
 !
-!  For valid factors and patterns, see OpenGL::glLineStipple().
+!  For valid factors and patterns, see `OpenGL::glLineStipple()`.
 !
 !  This applies to the current active SegmentArtist.
 
@@ -2447,7 +2503,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setxdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2462,7 +2518,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setydata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2477,7 +2533,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setzdata(src, element, opt, scale)
-    integer(int32), intent(in) :: src !! Type of data source to draw (see OpenFrames::Trajectory::SourceType enum).
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
     integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
     integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
                                       !! other values indicate the index of the optional to use. Only used if src = POSOPT.
@@ -2492,7 +2548,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setmarkers(markers)
-    integer(int32), intent(in) :: markers !! Indicates which data points should be drawn as markers (see: OpenFrames::MarkerArtist::DrawnMarkers enum).
+    integer(int32), intent(in) :: markers !! Indicates which data points should be drawn as markers (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
     call ofmarkerartist_setmarkers_c(to_c(markers))
     end subroutine ofmarkerartist_setmarkers
 
@@ -2503,7 +2559,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setmarkercolor(markers, r, g, b)
-    integer(int32), intent(in) :: markers !! The markers whose color should be set (see: OpenFrames::MarkerArtist::DrawnMarkers enum).
+    integer(int32), intent(in) :: markers !! The markers whose color should be set (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
     real(real32), intent(in) :: r !! Red color component [0-1].
     real(real32), intent(in) :: g !! Green color component [0-1].
     real(real32), intent(in) :: b !! Blue color component [0-1].
@@ -2543,7 +2599,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setintermediatetype(type)
-    integer(int32), intent(in) :: type !! Indicates how intermediate marker spacing is determined (see: OpenFrames::MarkerArtist::IntermediateType enum).
+    integer(int32), intent(in) :: type !! Indicates how intermediate marker spacing is determined (see: `OpenFrames::MarkerArtist::IntermediateType` enum).
     call ofmarkerartist_setintermediatetype_c(to_c(type))
     end subroutine ofmarkerartist_setintermediatetype
 
@@ -2565,7 +2621,7 @@
 !  This applies to the current active MarkerArtist.
 
     subroutine ofmarkerartist_setintermediatedirection(direction)
-    integer(int32), intent(in) :: direction !! Set intermediate marker direction (see: OpenFrames::MarkerArtist::DrawnMarkers enum).
+    integer(int32), intent(in) :: direction !! Set intermediate marker direction (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
     call ofmarkerartist_setintermediatedirection_c(to_c(direction))
     end subroutine ofmarkerartist_setintermediatedirection
 
@@ -2676,8 +2732,8 @@
     character(len=*), intent(in) :: root !! Name of the root of the ReferenceFrame heirarchy. Note: Must contain 'srcframe' and 'dstframe'.
     character(len=*), intent(in) :: srcframe !! ReferenceFrame this view will look from.
     character(len=*), intent(in) :: dstframe !! ReferenceFrame this view will look towards.
-    integer(int32), intent(in) :: frameType !! Frame type to use (see: OpenFrames::View::ViewFrameType enum)
-    integer(int32), intent(in) :: rotationType !! Rotation type to use when following dstframe (see: OpenFrames::View::ViewRotationType enum).
+    integer(int32), intent(in) :: frameType !! Frame type to use (see: `OpenFrames::View::ViewFrameType` enum)
+    integer(int32), intent(in) :: rotationType !! Rotation type to use when following dstframe (see: `OpenFrames::View::ViewRotationType` enum).
     call ofview_setviewbetweenframes_c(to_c(root), to_c(srcframe), to_c(dstframe), to_c(frametype), to_c(rotationtype))
     end subroutine ofview_setviewbetweenframes
 
