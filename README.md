@@ -1,4 +1,4 @@
-![openframes-fortran](media/icon.png)
+![openframes-fortran](media/logo.png)
 ============
 
 Modern Fortran interface to the [OpenFrames](https://github.com/ravidavi/OpenFrames) realtime interactive scientific visualization API.
