@@ -35,3 +35,5 @@
 build/
 doc/
 /env
+scripts/build
+scripts/OpenFrames
