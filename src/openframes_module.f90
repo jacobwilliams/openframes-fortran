@@ -1,0 +1,2809 @@
+!****************************************************************************************************
+!>
+!  Modern Fortran interface module to the OpenFrames C interface.
+!
+!  All functions have a prefix indicating what they operate on:
+!
+!  * `ofwin:` Acts on the currently active WindowProxy
+!  * `offm`: Acts on the specified FrameManager.
+!  * `offrame`: Acts on the currently active Reference Frame.
+!  * `of(type of ReferenceFrame)`: Acts on the currently active ReferenceFrame,
+!      assuming that it is of the subtype given by the function name.
+!  * `oftraj`: Acts on the currently active Trajectory.
+!  * `oftrajartist`: Acts on the currently active TrajectoryArtist.
+!  * `of(type of TrajectoryArtist)`: Acts on the currently active TrajectoryArtist,
+!      assuming that it is of the subtype given by the function name.
+!  * `ofview`: Acts on the currently active View.
+!
+!  In addition, some functions produce integer results. These values
+!  can be obtained by calling [[of_getreturnedvalue]].
+!
+!### Author
+!  * Jacob Williams, 9/9/2018 : based on the original OpenFrames
+!                               module by Ravishankar Mathur. These
+!                               modifications are released under the
+!                               same license (Apache 2.0).
+
+    module openframes_module
+
+    use, intrinsic :: iso_c_binding
+    use, intrinsic :: iso_fortran_env
+    use openframes_c_interface
+    use openframes_fortran_helpers
+
+    implicit none
+
+    private
+
+    ! constants used to tell an artist where to get data for a point.
+    integer(c_int), parameter, public :: of_zero = 0
+    integer(c_int), parameter, public :: of_time = 1
+    integer(c_int), parameter, public :: of_posopt = 2
+    integer(c_int), parameter, public :: of_attitude = 3
+
+    ! constants used to tell an artist what part of the data to use
+    ! when plotting a point.
+    integer(c_int), parameter, public :: of_x = 0 !! x position or quaternion 1 element
+    integer(c_int), parameter, public :: of_y = 1 !! y position or quaternion 2 element
+    integer(c_int), parameter, public :: of_z = 2 !! z position or quaternion 3 element
+    integer(c_int), parameter, public :: of_w = 3 !! quaternion 4 element (angle)
+
+    ! constants used to tell a markerartist which markers to draw.
+    integer(c_int), parameter, public :: ofma_start = 1 !! draw start marker
+    integer(c_int), parameter, public :: ofma_intermediate = 2 !! draw intermediate markers
+    integer(c_int), parameter, public :: ofma_end = 4   !! draw end marker
+
+    ! constants used to tell a markerartist which intermediate markers to draw
+    integer(c_int), parameter, public :: ofma_time = 1 ! !time increments
+    integer(c_int), parameter, public :: ofma_distance = 2 !! distance increments
+    integer(c_int), parameter, public :: ofma_data = 3 !! data point increments
+
+    ! constants that determine how a frame following a trajectory handles when
+    ! the current time is out of the trajectory's data bounds
+    integer(c_int), parameter, public :: offollow_loop = 0
+    integer(c_int), parameter, public :: offollow_limit = 1
+
+    ! constants that specify whether a frame follows a trajectory's position,
+    ! attitude, or both
+    integer(c_int), parameter, public :: offollow_position = 1
+    integer(c_int), parameter, public :: offollow_attitude = 2
+
+    ! constants that specify which axes to use
+    integer(c_int), parameter, public :: of_noaxes = 0 !! don't use any axes
+    integer(c_int), parameter, public :: of_xaxis = 1 !! use x axis
+    integer(c_int), parameter, public :: of_yaxis = 2 !! use y axis
+    integer(c_int), parameter, public :: of_zaxis = 4 !! use z axis
+
+    ! constants that specify relative view base reference frame
+    integer(c_int), parameter, public :: ofview_absolute = 0 !! global reference frame
+    integer(c_int), parameter, public :: ofview_relative = 1 !! body-fixed frame
+
+    ! constants that specify relative view rotation between frames
+    integer(c_int), parameter, public :: ofview_direct = 0 !! direct rotation
+    integer(c_int), parameter, public :: ofview_azel = 1 !! azimuth-elevation rotation
+
+    public :: of_initialize
+    public :: of_cleanup
+    public :: of_getreturnedvalue
+    public :: of_adddatafilepath
+    public :: ofwin_activate
+    public :: ofwin_getid
+    public :: ofwin_createproxy
+    public :: ofwin_setwindowname
+    public :: ofwin_setgridsize
+    public :: ofwin_setkeypresscallback
+    public :: ofwin_setmousemotioncallback
+    public :: ofwin_setbuttonpresscallback
+    public :: ofwin_setbuttonreleasecallback
+    public :: ofwin_start
+    public :: ofwin_stop
+    public :: ofwin_waitforstop
+    public :: ofwin_signalstop
+    public :: ofwin_pauseanimation
+    public :: ofwin_isrunning
+    public :: ofwin_setscene
+    public :: ofwin_settime
+    public :: ofwin_gettime
+    public :: ofwin_pausetime
+    public :: ofwin_istimepaused
+    public :: ofwin_settimescale
+    public :: ofwin_gettimescale
+    public :: ofwin_setlightambient
+    public :: ofwin_setlightdiffuse
+    public :: ofwin_setlightspecular
+    public :: ofwin_setlightposition
+    public :: ofwin_setstereo
+    public :: ofwin_setbackgroundcolor
+    public :: ofwin_setbackgroundtexture
+    public :: ofwin_setbackgroundstardata
+    public :: ofwin_enablehudtext
+    public :: ofwin_sethudtextfont
+    public :: ofwin_sethudtextparameters
+    public :: ofwin_sethudtextposition
+    public :: ofwin_sethudtext
+    public :: ofwin_setdesiredframerate
+    public :: ofwin_addview
+    public :: ofwin_removeview
+    public :: ofwin_removeallviews
+    public :: ofwin_selectview
+    public :: ofwin_setswapbuffersfunction
+    public :: ofwin_setmakecurrentfunction
+    public :: ofwin_setupdatecontextfunction
+    public :: ofwin_resizewindow
+    public :: ofwin_keypress
+    public :: ofwin_keyrelease
+    public :: ofwin_buttonpress
+    public :: ofwin_buttonrelease
+    public :: ofwin_mousemotion
+    public :: ofwin_capturewindow
+    public :: ofwin_setwindowcapturefile
+    public :: ofwin_setwindowcapturekey
+    public :: offm_activate
+    public :: offm_create
+    public :: offm_setframe
+    public :: offm_lock
+    public :: offm_unlock
+    public :: offrame_activate
+    public :: offrame_create
+    public :: offrame_setcolor
+    public :: offrame_addchild
+    public :: offrame_removechild
+    public :: offrame_removeallchildren
+    public :: offrame_getnumchildren
+    public :: offrame_setposition
+    public :: offrame_getposition
+    public :: offrame_setattitude
+    public :: offrame_getattitude
+    public :: offrame_showaxes
+    public :: offrame_shownamelabel
+    public :: offrame_showaxeslabels
+    public :: offrame_setnamelabel
+    public :: offrame_setlabelfont
+    public :: offrame_setlabelsize
+    public :: offrame_setaxeslabels
+    public :: offrame_movexaxis
+    public :: offrame_moveyaxis
+    public :: offrame_movezaxis
+    public :: offrame_setlightsourceenabled
+    public :: offrame_getlightsourceenabled
+    public :: offrame_setlightambient
+    public :: offrame_setlightdiffuse
+    public :: offrame_setlightspecular
+    public :: offrame_followtrajectory
+    public :: offrame_followtype
+    public :: offrame_followposition
+    public :: offrame_printframestring
+    public :: ofsphere_create
+    public :: ofsphere_setradius
+    public :: ofsphere_settexturemap
+    public :: ofsphere_setnighttexturemap
+    public :: ofsphere_setautolod
+    public :: ofsphere_setsphereposition
+    public :: ofsphere_setsphereattitude
+    public :: ofsphere_setspherescale
+    public :: ofsphere_setmaterialambient
+    public :: ofsphere_setmaterialdiffuse
+    public :: ofsphere_setmaterialspecular
+    public :: ofsphere_setmaterialemission
+    public :: ofsphere_setmaterialshininess
+    public :: ofmodel_create
+    public :: ofmodel_setmodel
+    public :: ofmodel_setmodelposition
+    public :: ofmodel_getmodelposition
+    public :: ofmodel_setmodelscale
+    public :: ofmodel_getmodelscale
+    public :: ofmodel_setmodelpivot
+    public :: ofmodel_getmodelpivot
+    public :: ofmodel_getmodelsize
+    public :: ofdrawtraj_create
+    public :: ofdrawtraj_addartist
+    public :: ofdrawtraj_removeartist
+    public :: ofdrawtraj_removeallartists
+    public :: ofcoordaxes_create
+    public :: ofcoordaxes_setaxislength
+    public :: ofcoordaxes_setaxiswidth
+    public :: ofcoordaxes_setdrawaxes
+    public :: ofcoordaxes_settickspacing
+    public :: ofcoordaxes_setticksize
+    public :: ofcoordaxes_settickimage
+    public :: ofcoordaxes_settickshader
+    public :: oflatlongrid_create
+    public :: oflatlongrid_setparameters
+    public :: ofradialplane_create
+    public :: ofradialplane_setparameters
+    public :: ofradialplane_setplanecolor
+    public :: ofradialplane_setlinecolor
+    public :: oftraj_activate
+    public :: oftraj_create
+    public :: oftraj_setnumoptionals
+    public :: oftraj_setdof
+    public :: oftraj_addtime
+    public :: oftraj_addposition
+    public :: oftraj_addpositionvec
+    public :: oftraj_addattitude
+    public :: oftraj_addattitudevec
+    public :: oftraj_setoptional
+    public :: oftraj_setoptionalvec
+    public :: oftraj_clear
+    public :: oftraj_informartists
+    public :: oftraj_autoinformartists
+    public :: oftrajartist_activate
+    public :: oftrajartist_settrajectory
+    public :: ofcurveartist_create
+    public :: ofcurveartist_setxdata
+    public :: ofcurveartist_setydata
+    public :: ofcurveartist_setzdata
+    public :: ofcurveartist_setcolor
+    public :: ofcurveartist_setwidth
+    public :: ofcurveartist_setpattern
+    public :: ofsegmentartist_create
+    public :: ofsegmentartist_setstartxdata
+    public :: ofsegmentartist_setstartydata
+    public :: ofsegmentartist_setstartzdata
+    public :: ofsegmentartist_setendxdata
+    public :: ofsegmentartist_setendydata
+    public :: ofsegmentartist_setendzdata
+    public :: ofsegmentartist_setstride
+    public :: ofsegmentartist_setcolor
+    public :: ofsegmentartist_setwidth
+    public :: ofsegmentartist_setpattern
+    public :: ofmarkerartist_create
+    public :: ofmarkerartist_setxdata
+    public :: ofmarkerartist_setydata
+    public :: ofmarkerartist_setzdata
+    public :: ofmarkerartist_setmarkers
+    public :: ofmarkerartist_setmarkercolor
+    public :: ofmarkerartist_setmarkerimage
+    public :: ofmarkerartist_setmarkershader
+    public :: ofmarkerartist_setintermediatetype
+    public :: ofmarkerartist_setintermediatespacing
+    public :: ofmarkerartist_setintermediatedirection
+    public :: ofmarkerartist_setmarkersize
+    public :: ofmarkerartist_setautoattenuate
+    public :: ofview_activate
+    public :: ofview_create
+    public :: ofview_setorthographic
+    public :: ofview_setperspective
+    public :: ofview_setviewframe
+    public :: ofview_setviewbetweenframes
+    public :: ofview_setdefaultviewdistance
+    public :: ofview_gettrackball
+    public :: ofview_settrackball
+    public :: ofview_isvalid
+    public :: ofview_reset
+
+    contains
+!****************************************************************************************************
+
+!****************************************************************************************************
+!>
+!  sets up all internal openframes fortran/c interface variables
+!  must be called before other openframes calls
+
+    subroutine of_initialize()
+    call of_initialize_c()
+    end subroutine of_initialize
+
+!****************************************************************************************************
+!>
+!  cleans up all internal openframes fortran/c interface variables
+!  must be called when done using openframes
+!  afterwards, the only way to continue using openframes is to
+!  first make another call to [[of_initialize]]
+!
+!@warning DO NOT call [[of_getreturnedvalue]] after calling [[of_cleanup]].
+!         This function sets the pointer for `_objs` to `NULL`,
+!         which would be dereferenced by [[of_cleanup]].
+
+    subroutine of_cleanup()
+    call of_cleanup_c()
+    end subroutine of_cleanup
+
+!****************************************************************************************************
+!>
+!  Get the return value returned by the most recent API function call.
+!
+!  Functions return zero to indicate success, and non-zero to indicate an error.
+!
+!@warning DO NOT call [[of_getreturnedvalue]] after calling [[of_cleanup]].
+!         This function sets the pointer for `_objs` to `NULL`,
+!         which would be dereferenced by [[of_cleanup]].
+
+    subroutine of_getreturnedvalue(val)
+    integer(int32), intent(out) :: val !! variable to store the return value from the previous API function call.
+    integer(c_int) :: cval
+    call of_getreturnedvalue_c(cval)
+    val = to_f(cval)
+    end subroutine of_getreturnedvalue
+
+!****************************************************************************************************
+!>
+!  Add a search path when OSG tries to load data files.
+!
+!  These can be images, models, or any other data files.
+!  This does not affect loading OSG libraries or plugins.
+!  The new path is added to the FRONT of the path search list,
+!  and will be searched before any existing paths
+!  (including previous calls to [[of_addDataFilePath]].
+
+    subroutine of_adddatafilepath(newpath)
+    character(len=*), intent(in) :: newpath !! full path to be searched when loading a file.
+    call of_adddatafilepath_c(to_c(newpath))
+    end subroutine of_adddatafilepath
+
+!****************************************************************************************************
+!>
+!  Set the active WindowProxy
+
+    subroutine ofwin_activate(id)
+    integer(int32), intent(in) :: id !! ID of the window to activate.
+    call ofwin_activate_c(to_c(id))
+    end subroutine ofwin_activate
+
+!****************************************************************************************************
+!>
+!  Get ID of the active WindowProxy
+
+    subroutine ofwin_getid(id)
+    integer(int32), intent(out) :: id !! ID of the active window.
+    integer(c_int) :: cid
+    call ofwin_getid_c(cid)
+    id = to_f(cid)
+    end subroutine ofwin_getid
+
+!****************************************************************************************************
+!>
+!  Create a new WindowProxy that will manage drawing onto a window.
+!  This new WindowProxy will also become the current active one.
+
+    subroutine ofwin_createproxy(x, y, width, height, nrow, ncol, embedded, id, usevr)
+    integer(int32), intent(in) :: x !! X-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: y !! Y-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: width !! Width of the window (in pixels).
+    integer(int32), intent(in) :: height !! Height of the window (in pixels).
+    integer(int32), intent(in) :: nrow !! Number of rows in the window grid.
+    integer(int32), intent(in) :: ncol !! Number of columns in the window grid.
+    logical, intent(in) :: embedded !! True if the user wants to provide their own OpenGL window.
+    integer(int32), intent(in) :: id !! ID of this window.
+    logical, intent(in) :: usevr !! Whether to enable rendering in VR (if OpenFrames is built with OpenVR support)
+    call ofwin_createproxy_c(to_c(x), to_c(y), to_c(width), to_c(height), to_c(nrow), &
+                             to_c(ncol), to_c(embedded), to_c(id), to_c(usevr))
+    end subroutine ofwin_createproxy
+
+!****************************************************************************************************
+!>
+!  Set the window name (title). Only applies to non-embedded windows.
+
+    subroutine ofwin_setwindowname(winname)
+    character(len=*), intent(in) :: winname !! The new window name.
+    call ofwin_setwindowname_c(to_c(winname))
+    end subroutine ofwin_setwindowname
+
+!****************************************************************************************************
+!>
+!  Set the number rows and columns in the grid.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setgridsize(nrow, ncol)
+    integer(int32), intent(in) :: nrow !! Number of rows in the window grid.
+    integer(int32), intent(in) :: ncol !! Number of columns in the window grid.
+    call ofwin_setgridsize_c(to_c(nrow), to_c(ncol))
+    end subroutine ofwin_setgridsize
+
+!****************************************************************************************************
+!>
+!  Set a callback function to be called on keypress.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setkeypresscallback(fcn)
+    procedure(keypresscallback) :: fcn !! Callback function to be called on keypress.
+    call ofwin_setkeypresscallback_c(fcn)
+    end subroutine ofwin_setkeypresscallback
+
+!****************************************************************************************************
+!>
+!  Set a callback function to be called on mouse motion.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setmousemotioncallback(fcn)
+    procedure(mousemotioncallback) :: fcn !! Callback function to be called on mouse motion.
+    call ofwin_setmousemotioncallback_c(fcn)
+    end subroutine ofwin_setmousemotioncallback
+
+!****************************************************************************************************
+!>
+!  Set a callback function to be called on button press.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setbuttonpresscallback(fcn)
+    procedure(buttonpresscallback) :: fcn !! Callback function to be called on button press.
+    call ofwin_setbuttonpresscallback_c(fcn)
+    end subroutine ofwin_setbuttonpresscallback
+
+!****************************************************************************************************
+!>
+!  Set a callback function to be called on button release.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setbuttonreleasecallback(fcn)
+    procedure(buttonreleasecallback) :: fcn !! Callback function to be called on button release.
+    call ofwin_setbuttonreleasecallback_c(fcn)
+    end subroutine ofwin_setbuttonreleasecallback
+
+!****************************************************************************************************
+!>
+!  Start animation.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_start()
+    call ofwin_start_c()
+    end subroutine ofwin_start
+
+!****************************************************************************************************
+!>
+!  Force animation to stop and wait for the thread to stop.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_stop()
+    call ofwin_stop_c()
+    end subroutine ofwin_stop
+
+!****************************************************************************************************
+!>
+!  Signal animation to stop and return immediately.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_signalstop()
+    call ofwin_signalstop_c()
+    end subroutine ofwin_signalstop
+
+!****************************************************************************************************
+!>
+!  Wait for user to exit animation.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_waitforstop()
+    call ofwin_waitforstop_c()
+    end subroutine ofwin_waitforstop
+
+!****************************************************************************************************
+!>
+!  Pause/unpause the animation.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_pauseanimation(pause)
+    implicit none
+    logical,intent(in) :: pause !! True to pause the animation, False to unpause the animation.
+    call ofwin_pauseanimation_c(to_c(pause))
+    end subroutine ofwin_pauseanimation
+
+!****************************************************************************************************
+!>
+!  Check if the animation is running.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_isrunning(state)
+    integer(int32), intent(out) :: state !! This variable is set to 1 if the animation is running, 0 otherwise.
+    integer(c_int) :: cstate
+    call ofwin_isrunning_c(cstate)
+    state = to_f(cstate)
+    end subroutine ofwin_isrunning
+
+!****************************************************************************************************
+!>
+!  Set the scene at the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!  The scene is specified by the currently active FrameManager.
+
+    subroutine ofwin_setscene(row, col)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    call ofwin_setscene_c(to_c(row), &
+                          to_c(col))
+    end subroutine ofwin_setscene
+
+!****************************************************************************************************
+!>
+!  Set the simulation time.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_settime(time)
+    real(real64), intent(in) :: time !! New simulation time.
+    call ofwin_settime_c(to_c(time))
+    end subroutine ofwin_settime
+
+!****************************************************************************************************
+!>
+!  Get the simulation time.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_gettime(time)
+    real(real64), intent(out) :: time !! Current simulation time.
+    real(c_double) :: ctime
+    call ofwin_gettime_c(ctime)
+    time = to_f(ctime)
+    end subroutine ofwin_gettime
+
+!****************************************************************************************************
+!>
+!  Set whether to pause time.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_pausetime(pause)
+    logical, intent(in) :: pause !! Set to 1 to pause the simulation time, 0 to unpause.
+    call ofwin_pausetime_c(to_c(pause))
+    end subroutine ofwin_pausetime
+
+!****************************************************************************************************
+!>
+!  Check if time is paused.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_istimepaused(ispaused)
+    logical, intent(out) :: ispaused !! Set to 1 if simulation time is paused, 0 if unpaused.
+    logical(c_bool) :: cispaused
+    call ofwin_istimepaused_c(cispaused)
+    ispaused = to_f(cispaused)
+    end subroutine ofwin_istimepaused
+
+!****************************************************************************************************
+!>
+!  Set the simulation time scale.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_settimescale(tscale)
+    real(real64), intent(in) :: tscale !! New simulation time scale.
+    call ofwin_settimescale_c(to_c(tscale))
+    end subroutine ofwin_settimescale
+
+!****************************************************************************************************
+!>
+!  Get the simulation time scale.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_gettimescale(tscale)
+    real(real64), intent(out) :: tscale !! Current simulation time scale.
+    real(c_double) :: ctscale
+    call ofwin_gettimescale_c(ctscale)
+    tscale = to_f(ctscale)
+    end subroutine ofwin_gettimescale
+
+!****************************************************************************************************
+!>
+!  Set the lighting parameters for the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!
+!@note This can be overridden by enabling light from at least one ReferenceFrame.
+
+    subroutine ofwin_setlightambient(row, col, r, g, b)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: r !! Red component of specified light.
+    real(real32), intent(in) :: g !! Green component of specified light.
+    real(real32), intent(in) :: b !! Blue component of specified light.
+    call ofwin_setlightambient_c(to_c(row), to_c(col), to_c(r), to_c(g), to_c(b))
+    end subroutine ofwin_setlightambient
+
+!****************************************************************************************************
+!>
+!  Set the lighting parameters for the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!
+!@note This can be overridden by enabling light from at least one ReferenceFrame.
+
+    subroutine ofwin_setlightdiffuse(row, col, r, g, b)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: r !! Red component of specified light.
+    real(real32), intent(in) :: g !! Green component of specified light.
+    real(real32), intent(in) :: b !! Blue component of specified light.
+    call ofwin_setlightdiffuse_c(to_c(row), to_c(col), to_c(r), to_c(g), to_c(b))
+    end subroutine ofwin_setlightdiffuse
+
+!****************************************************************************************************
+!>
+!  Set the lighting parameters for the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!
+!@note This can be overridden by enabling light from at least one ReferenceFrame.
+
+    subroutine ofwin_setlightspecular(row, col, r, g, b)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: r !! Red component of specified light.
+    real(real32), intent(in) :: g !! Green component of specified light.
+    real(real32), intent(in) :: b !! Blue component of specified light.
+    call ofwin_setlightspecular_c(to_c(row), to_c(col), to_c(r), to_c(g), to_c(b))
+    end subroutine ofwin_setlightspecular
+
+!****************************************************************************************************
+!>
+!  Set the light position for the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!  Light position is defined in eye coordinates (x right, y up, z out of screen).
+
+    subroutine ofwin_setlightposition(row, col, x, y, z, w)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: x !! X position in eye space.
+    real(real32), intent(in) :: y !! Y position in eye space.
+    real(real32), intent(in) :: z !! Z position in eye space.
+    real(real32), intent(in) :: w !! If 0 then directional (antiparallel to x,y,z direction).
+                                  !! If 1 then positional  (radiates from x,y,z direction).
+    call ofwin_setlightposition_c(to_c(row), to_c(col), to_c(x), to_c(y), to_c(z), to_c(w))
+    end subroutine ofwin_setlightposition
+
+!****************************************************************************************************
+!>
+!  Set the 3D stereo mode for the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+!  The scene is specified by the currently active FrameManager.
+
+    subroutine ofwin_setstereo(row, col, enable, eyeseparation, width, height, distance)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    logical, intent(in) :: enable !! True to enable 3D stereo mode.
+    real(real32), intent(in) :: eyeseparation !! Set eye separation for 3D stereo.
+    real(real32), intent(in) :: width !! Width of the screen.
+    real(real32), intent(in) :: height !! Height of the screen.
+    real(real32), intent(in) :: distance !! Distance of the screen.
+    call ofwin_setstereo_c(to_c(row), to_c(col), to_c(enable), to_c(eyeseparation), to_c(width), to_c(height), to_c(distance))
+    end subroutine ofwin_setstereo
+
+!****************************************************************************************************
+!>
+!  Set the background color of the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setbackgroundcolor(row, col, r, g, b)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    call ofwin_setbackgroundcolor_c(to_c(row), to_c(col), to_c(r), to_c(g), to_c(b))
+    end subroutine ofwin_setbackgroundcolor
+
+!****************************************************************************************************
+!>
+!  Set the background texture of the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setbackgroundtexture(row, col, fname)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    character(len=*), intent(in) :: fname !! File containing the background texture.
+    call ofwin_setbackgroundtexture_c(to_c(row), to_c(col), to_c(fname))
+    end subroutine ofwin_setbackgroundtexture
+
+!****************************************************************************************************
+!>
+!  Set the background star field of the specified grid position.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setbackgroundstardata(row, col, minmag, maxmag, fname)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: minmag !! Minimum star magnitude to show.
+    real(real32), intent(in) :: maxmag !! Maximum star magnitude to show.
+    character(len=*), intent(in) :: fname !! File containing the background star field catalog data.
+    call ofwin_setbackgroundstardata_c(to_c(row), to_c(col), to_c(minmag), to_c(maxmag), to_c(fname))
+    end subroutine ofwin_setbackgroundstardata
+
+!****************************************************************************************************
+!>
+!  Enable/disable the HUD text for the specified grid position. Create placeholder
+!  HUD text if it does not yet exist.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_enablehudtext(row, col, enable)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    logical, intent(in) :: enable !! Whether to enable or disable the HUD text.
+    call ofwin_enablehudtext_c(to_c(row), to_c(col), to_c(enable))
+    end subroutine ofwin_enablehudtext
+
+!****************************************************************************************************
+!>
+!  Set HUD font. Create placeholder HUD text if it does not yet exist.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_sethudtextfont(row, col, fname)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    character(len=*), intent(in) :: fname !! Name of font to use, e.g. "arial.ttf".
+    call ofwin_sethudtextfont_c(to_c(row), to_c(col), to_c(fname))
+    end subroutine ofwin_sethudtextfont
+
+!****************************************************************************************************
+!>
+!  Set HUD color and size. Create placeholder HUD text if it does not yet exist.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_sethudtextparameters(row, col, r, g, b, charsize)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: r !! Red color component.
+    real(real32), intent(in) :: g !! Green color component.
+    real(real32), intent(in) :: b !! Blue color component.
+    real(real32), intent(in) :: charsize !! Character size in pixels.
+    call ofwin_sethudtextparameters_c(to_c(row), to_c(col), to_c(r), to_c(g), to_c(b), to_c(charsize))
+    end subroutine ofwin_sethudtextparameters
+
+!****************************************************************************************************
+!>
+!  Set HUD text position and alignment. Create placeholder HUD text if it does not yet exist.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_sethudtextposition(row, col, x, y, alignment)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    real(real32), intent(in) :: x !! Text origin x position, in range [0,1] from left to right.
+    real(real32), intent(in) :: y !! Text origin y position, in range [0,1] from bottom to top.
+    integer(int32), intent(in) :: alignment !! Alignment location of text origin, see osgText::AlignmentType enum.
+    call ofwin_sethudtextposition_c(to_c(row), to_c(col), to_c(x), to_c(y), to_c(alignment))
+    end subroutine ofwin_sethudtextposition
+
+!****************************************************************************************************
+!>
+!  Set HUD text. Create placeholder HUD text if it does not yet exist.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_sethudtext(row, col, text)
+    integer(int32), intent(in) :: row !! Row in the grid to set.
+    integer(int32), intent(in) :: col !! Column in the grid to set.
+    character(len=*), intent(in) :: text !! The new HUD text.
+    call ofwin_sethudtext_c(to_c(row), to_c(col), to_c(text))
+    end subroutine ofwin_sethudtext
+
+!****************************************************************************************************
+!>
+!  Set the desired framerate of the window (frames/second).
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setdesiredframerate(fps)
+    real(real64), intent(in) :: fps !! Desired framerate value in frames per second.
+    call ofwin_setdesiredframerate_c(to_c(fps))
+    end subroutine ofwin_setdesiredframerate
+
+!****************************************************************************************************
+!>
+!  Add a view to the window.
+!
+!  This applies to the current active WindowProxy.
+!  This adds the current acive View.
+
+    subroutine ofwin_addview(row, col)
+    integer(int32), intent(in) :: row !! Row to add the view to.
+    integer(int32), intent(in) :: col !! Column to add the view to.
+    call ofwin_addview_c(to_c(row), to_c(col))
+    end subroutine ofwin_addview
+
+!****************************************************************************************************
+!>
+!  Remove a view from the window.
+!
+!  This applies to the current active WindowProxy.
+!  This removes the current acive View.
+
+    subroutine ofwin_removeview(row, col)
+    integer(int32), intent(in) :: row !! Row to remove the view from.
+    integer(int32), intent(in) :: col !! Column to remove the view from.
+    call ofwin_removeview_c(to_c(row), to_c(col))
+    end subroutine ofwin_removeview
+
+!****************************************************************************************************
+!>
+!  Remove all the view(s) from the window.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_removeallviews(row, col)
+    integer(int32), intent(in) :: row !! Row to remove the view(s) from.
+    integer(int32), intent(in) :: col !! Column to remove the view(s) from.
+    call ofwin_removeallviews_c(to_c(row), to_c(col))
+    end subroutine ofwin_removeallviews
+
+!****************************************************************************************************
+!>
+!  Set the view currently displayed in the window.
+!
+!  This applies to the current active WindowProxy.
+!  This selects the current active View.
+
+    subroutine ofwin_selectview(row, col)
+    integer(int32), intent(in) :: row !! Row to set the active view in.
+    integer(int32), intent(in) :: col !! Column to set the active view in.
+    call ofwin_selectview_c(to_c(row), to_c(col))
+    end subroutine ofwin_selectview
+
+!****************************************************************************************************
+!>
+!  Set a callback function for swapping the front/back buffers.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setswapbuffersfunction(fcn)
+    procedure(swapbuffersfunction) :: fcn !! Callback function to be called.
+    call ofwin_setswapbuffersfunction_c(fcn)
+    end subroutine ofwin_setswapbuffersfunction
+
+!****************************************************************************************************
+!>
+!  Set a callback function for making the OpenGL context current (so it can be drawn on).
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setmakecurrentfunction(fcn)
+    procedure(makecurrentfunction) :: fcn !! Callback function to be called.
+    call ofwin_setmakecurrentfunction_c(fcn)
+    end subroutine ofwin_setmakecurrentfunction
+
+!****************************************************************************************************
+!>
+!  Set a callback function for updating the OpenGL context after qualifying events.
+!
+!  Currently this includes resize.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_setupdatecontextfunction(fcn)
+    procedure(updatecontextfunction) :: fcn !! Callback function to be called.
+    call ofwin_setupdatecontextfunction_c(fcn)
+    end subroutine ofwin_setupdatecontextfunction
+
+!****************************************************************************************************
+!>
+!  Resize the window to a new position and size.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_resizewindow(x, y, width, height)
+    integer(int32), intent(in) :: x !! X-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: y !! Y-coordinate (in pixels) of the screen of the upper-right corner of the window.
+    integer(int32), intent(in) :: width !! Width of the window (in pixels).
+    integer(int32), intent(in) :: height !! Height of the window (in pixels).
+    call ofwin_resizewindow_c(to_c(x), to_c(y), to_c(width), to_c(height))
+    end subroutine ofwin_resizewindow
+
+!****************************************************************************************************
+!>
+!  Create a key-pressed event.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_keypress(key)
+    integer(int32), intent(in) :: key !! Key pressed (see osg::GUIEventAdapter::KeySymbol enum).
+    call ofwin_keypress_c(to_c(key))
+    end subroutine ofwin_keypress
+
+!****************************************************************************************************
+!>
+!  Create a key released event.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_keyrelease(key)
+    integer(int32), intent(in) :: key !! Key released (see osg::GUIEventAdapter::KeySymbol enum).
+    call ofwin_keyrelease_c(to_c(key))
+    end subroutine ofwin_keyrelease
+
+!****************************************************************************************************
+!>
+!  Create a mouse button pressed event.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_buttonpress(x, y, button)
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
+    integer(int32), intent(in) :: button !! Mouse button pressed. Button numbering is 1 for left mouse button, 2 for middle, 3 for right.
+    call ofwin_buttonpress_c(to_c(x), to_c(y), to_c(button))
+    end subroutine ofwin_buttonpress
+
+!****************************************************************************************************
+!>
+!  Create a mouse button released event.
+!
+!  This applies to the current active WindowProxy.
+!
+    subroutine ofwin_buttonrelease(x, y, button)
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
+    integer(int32), intent(in) :: button !! Mouse button released. Button numbering is 1 for left mouse button, 2 for middle, 3 for right.
+    call ofwin_buttonrelease_c(to_c(x), to_c(y), to_c(button))
+    end subroutine ofwin_buttonrelease
+
+!****************************************************************************************************
+!>
+!  Create a mouse-moved event.
+!
+!  This applies to the current active WindowProxy.
+
+    subroutine ofwin_mousemotion(x, y)
+    real(real32), intent(in) :: x !! X-coordinate of the mouse in the window.
+    real(real32), intent(in) :: y !! Y-coordinate of the mouse in the window.
+    call ofwin_mousemotion_c(to_c(x), to_c(y))
+    end subroutine ofwin_mousemotion
+
+!****************************************************************************************************
+!>
+!  Capture the next rendered frame.
+!
+!  This applies to the currently active WindowProxy.
+
+    subroutine ofwin_capturewindow()
+    call ofwin_capturewindow_c()
+    end subroutine ofwin_capturewindow
+
+!****************************************************************************************************
+!>
+!  Set the file name and type that will be used for window captures.
+!
+!  This applies to the currently active WindowProxy.
+
+    subroutine ofwin_setwindowcapturefile(fname, fext)
+    character(len=*), intent(in) :: fname !! File name (without extension).
+    character(len=*), intent(in) :: fext !! File extension (determines image type).
+    call ofwin_setwindowcapturefile_c(to_c(fname), to_c(fext))
+    end subroutine ofwin_setwindowcapturefile
+
+!****************************************************************************************************
+!>
+!  Set the key that activates a window capture.
+!
+!  This applies to the currently active WindowProxy.
+
+    subroutine ofwin_setwindowcapturekey(key)
+    integer(int32), intent(in) :: key !! Integer representation of key char. Set to 0 (zero) to disable key-based window capture.
+    call ofwin_setwindowcapturekey_c(to_c(key))
+    end subroutine ofwin_setwindowcapturekey
+
+    ! FrameManager functions
+
+!****************************************************************************************************
+!>
+!  Set the currently active FrameManager.
+
+    subroutine offm_activate(id)
+    integer(int32), intent(in) :: id !! ID of the frame manager to activate.
+    call offm_activate_c(to_c(id))
+    end subroutine offm_activate
+
+!****************************************************************************************************
+!>
+!  Create a new FrameManager with the given ID.
+!
+!  This new FrameManager will also become the current active one.
+
+    subroutine offm_create(id)
+    integer(int32), intent(in) :: id !! ID of the frame manager to create.
+    call offm_create_c(to_c(id))
+    end subroutine offm_create
+
+!****************************************************************************************************
+!>
+!  Assign a ReferenceFrame to the FrameManager.
+!
+!  This applies to the current active FrameManager.
+!  The scene is specified by the currently active ReferenceFrame.
+
+    subroutine offm_setframe()
+    call offm_setframe_c()
+    end subroutine offm_setframe
+
+!****************************************************************************************************
+!>
+!  Lock the current FrameManager.
+!
+!  This should be done before the FrameManager's scene is modified.
+!  This applies to the current active FrameManager.
+
+    subroutine offm_lock()
+    call offm_lock_c()
+    end subroutine offm_lock
+
+!****************************************************************************************************
+!>
+!  Unlock the current FrameManager.
+!
+!  This should be done after the FrameManager's scene is modified.
+!  This applies to the current active FrameManager.
+
+    subroutine offm_unlock()
+    call offm_unlock_c()
+    end subroutine offm_unlock
+
+    ! ReferenceFrame functions
+
+!****************************************************************************************************
+!>
+!  Set the currently active reference frame.
+
+    subroutine offrame_activate(name)
+    character(len=*), intent(in) :: name !! Name of the frame to activate.
+    call offrame_activate_c(to_c(name))
+    end subroutine offrame_activate
+
+!****************************************************************************************************
+!>
+!  Create a new ReferenceFrame with the given name.
+!
+!  This new ReferenceFrame will also become the current active one.
+
+    subroutine offrame_create(name)
+    character(len=*), intent(in) :: name !! Name of the frame to create.
+    call offrame_create_c(to_c(name))
+    end subroutine offrame_create
+
+!****************************************************************************************************
+!>
+!  Set the color of the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setcolor(r, g, b, a)
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    real(real32), intent(in) :: a !! Alpha (transparancy) component [0-1].
+    call offrame_setcolor_c(to_c(r), to_c(g), to_c(b), to_c(a))
+    end subroutine offrame_setcolor
+
+!****************************************************************************************************
+!>*
+!  Add a child frame to the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+!  The currently active frame will remain active.
+
+    subroutine offrame_addchild(name)
+    character(len=*), intent(in) :: name !! Name of the frame to add as a child to the active frame.
+    call offrame_addchild_c(to_c(name))
+    end subroutine offrame_addchild
+
+!****************************************************************************************************
+!>
+!  Remove a child frame from the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+!  The currently active frame will remain active.
+
+    subroutine offrame_removechild(name)
+    character(len=*), intent(in) :: name !! Name of the child frame to remove from the active frame.
+    call offrame_removechild_c(to_c(name))
+    end subroutine offrame_removechild
+
+!****************************************************************************************************
+!>
+!  Remove all child frames from the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+!  The currently active frame will remain active.
+
+    subroutine offrame_removeallchildren()
+    call offrame_removeallchildren_c()
+    end subroutine offrame_removeallchildren
+
+!****************************************************************************************************
+!>
+!  Get the number of child frames in the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_getnumchildren(numchildren)
+    integer(int32), intent(out) :: numchildren !! variable to store the number of child frames to.
+    integer(c_int) :: cnumchildren
+    call offrame_getnumchildren_c(cnumchildren)
+    numchildren = to_f(numchildren)
+    end subroutine offrame_getnumchildren
+
+!****************************************************************************************************
+!>
+!  Set the position of the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setposition(x, y, z)
+    real(real64), intent(in) :: x !! X position.
+    real(real64), intent(in) :: y !! Y position.
+    real(real64), intent(in) :: z !! Z position.
+    call offrame_setposition_c(to_c(x), to_c(y), to_c(z))
+    end subroutine offrame_setposition
+
+!****************************************************************************************************
+!>
+!  Get the position of the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_getposition(x, y, z)
+    real(real64), intent(out) :: x !! Returned X position.
+    real(real64), intent(out) :: y !! Returned Y position.
+    real(real64), intent(out) :: z !! Returned Z position.
+    real(c_double) :: cx, cy, cz
+    call offrame_getposition_c(cx, cy, cz)
+    x = to_f(cx)
+    y = to_f(cy)
+    z = to_f(cz)
+    end subroutine offrame_getposition
+
+!****************************************************************************************************
+!>
+!  Set the attitude of the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setattitude(x, y, z, angle)
+    real(real64), intent(in) :: x !! X component of the rotation quaternion.
+    real(real64), intent(in) :: y !! Y component of the rotation quaternion.
+    real(real64), intent(in) :: z !! Z component of the rotation quaternion.
+    real(real64), intent(in) :: angle !! Angle component of the rotation quaternion.
+    call offrame_setattitude_c(to_c(x), to_c(y), to_c(z), to_c(angle))
+    end subroutine offrame_setattitude
+
+!****************************************************************************************************
+!>
+!  Get the attitude of the current frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_getattitude(x, y, z, angle)
+    real(real64), intent(out) :: x !! Returned X component of the rotation quaternion.
+    real(real64), intent(out) :: y !! Returned Y component of the rotation quaternion.
+    real(real64), intent(out) :: z !! Returned Z component of the rotation quaternion.
+    real(real64), intent(out) :: angle !! Returned angle component of the rotation quaternion.
+    real(c_double) :: cx, cy, cz, cangle
+    call offrame_getattitude_c(cx, cy, cz, cangle)
+    x = to_f(cx)
+    y = to_f(cy)
+    z = to_f(cz)
+    angle = to_f(cangle)
+    end subroutine offrame_getattitude
+
+!****************************************************************************************************
+!>
+!  Toggle which axis components are displayed.
+!
+!  This applies to the current active ReferenceFrame.
+!  The axis is initially drawn at the origin of the reference frame unless otherwise
+!  specified by [[offrame_movexaxis]], [[offrame_moveyaxis]] or [[offrame_movezaxis]].
+!
+!  To show multiple axis components, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
+
+    subroutine offrame_showaxes(axes)
+    integer(int32), intent(in) :: axes !! Axis components to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
+    call offrame_showaxes_c(to_c(axes))
+    end subroutine offrame_showaxes
+
+!****************************************************************************************************
+!>
+!  Toggle display of the name label of the frame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_shownamelabel(namelabel)
+    logical, intent(in) :: namelabel !! True to display the label, false to hide it.
+    call offrame_shownamelabel_c(to_c(namelabel))
+    end subroutine offrame_shownamelabel
+
+!****************************************************************************************************
+!>
+!  Toggle which axis labels are displayed.
+!
+!  This applies to the current active ReferenceFrame.
+!  The axis is initially drawn at the origin of the reference frame unless otherwise
+!  specified by [[offrame_movexaxis]], [[offrame_moveyaxis]] or [[offrame_movezaxis]].
+!
+!  To show multiple axis labels, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
+
+    subroutine offrame_showaxeslabels(labels)
+    integer(int32), intent(in) :: labels !! Axis labels to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
+    call offrame_showaxeslabels_c(to_c(labels))
+    end subroutine offrame_showaxeslabels
+
+!****************************************************************************************************
+!>
+!  Change the name label for the current ReferenceFrame.
+!
+!  Note that it will still be referred to using the name assigned to it at creation.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setnamelabel(name)
+    character(len=*), intent(in) :: name !! Name of the label.
+    call offrame_setnamelabel_c(to_c(name))
+    end subroutine offrame_setnamelabel
+
+!****************************************************************************************************
+!>
+!  Change the axes labels for the current ReferenceFrame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setaxeslabels(xlabel, ylabel, zlabel)
+    character(len=*), intent(in) :: xlabel !! Name of the x-axis label.
+    character(len=*), intent(in) :: ylabel !! Name of the y-axis label.
+    character(len=*), intent(in) :: zlabel !! Name of the z-axis label.
+    call offrame_setaxeslabels_c(to_c(xlabel), to_c(ylabel), to_c(zlabel))
+    end subroutine offrame_setaxeslabels
+
+!****************************************************************************************************
+!>
+!  Set the label font for the current ReferenceFrame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlabelfont(font)
+    character(len=*), intent(in) :: font !! Font name, either with absolute path or standalone. Must include extension.
+    call offrame_setlabelfont_c(to_c(font))
+    end subroutine offrame_setlabelfont
+
+!****************************************************************************************************
+!>
+!  Set the label size for the current ReferenceFrame.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlabelsize(size)
+    integer(int32), intent(in) :: size !! Label size, used as maximum size for axes labels
+    call offrame_setlabelsize_c(to_c(size))
+    end subroutine offrame_setlabelsize
+
+!****************************************************************************************************
+!>
+!  Reposition and resize the x component of the coordinate axis.
+!
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_movexaxis(pos, length, headratio, bodyradius, headradius)
+    real(real64), dimension(3), intent(in) :: pos !! Position array of the origin of the x-axis component.
+    real(real64), intent(in) :: length !! Length of the x-axis arrow.
+    real(real64), intent(in) :: headratio !! Ratio of the arrow head to body. Set to 0.0 to use default.
+    real(real64), intent(in) :: bodyradius !! Radius of the body of the arrow. Set to 0.0 to use default.
+    real(real64), intent(in) :: headradius !! Radius of the head of the arrow. Set to 0.0 to use default.
+    call offrame_movexaxis_c(to_c(pos), to_c(length), to_c(headratio), to_c(bodyradius), to_c(headradius))
+    end subroutine offrame_movexaxis
+
+!****************************************************************************************************
+!>
+!  Reposition and resize the y component of the coordinate axis.
+!
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_moveyaxis(pos, length, headratio, bodyradius, headradius)
+    real(real64), dimension(3), intent(in) :: pos !! Position array of the origin of the y-axis component.
+    real(real64), intent(in) :: length !! Length of the y-axis arrow.
+    real(real64), intent(in) :: headratio !! Ratio of the arrow head to body. Set to 0.0 to use default.
+    real(real64), intent(in) :: bodyradius !! Radius of the body of the arrow. Set to 0.0 to use default.
+    real(real64), intent(in) :: headradius !! Radius of the head of the arrow. Set to 0.0 to use default.
+    call offrame_moveyaxis_c(to_c(pos), to_c(length), to_c(headratio), to_c(bodyradius), to_c(headradius))
+    end subroutine offrame_moveyaxis
+
+!****************************************************************************************************
+!>
+!  Reposition and resize the z component of the coordinate axis.
+!
+!  Make sure that [[offrame_showaxes]] is configured to display this axis.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_movezaxis(pos, length, headratio, bodyradius, headradius)
+    real(real64), dimension(3), intent(in) :: pos !! Position array of the origin of the z-axis component.
+    real(real64), intent(in) :: length !! Length of the z-axis arrow.
+    real(real64), intent(in) :: headratio !! Ratio of the arrow head to body. Set to 0.0 to use default.
+    real(real64), intent(in) :: bodyradius !! Radius of the body of the arrow. Set to 0.0 to use default.
+    real(real64), intent(in) :: headradius !! Radius of the head of the arrow. Set to 0.0 to use default.
+    call offrame_movezaxis_c(to_c(pos), to_c(length), to_c(headratio), to_c(bodyradius), to_c(headradius))
+    end subroutine offrame_movezaxis
+
+!****************************************************************************************************
+!>
+!  Enable and manage per-frame lighting.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlightsourceenabled(enabled)
+    logical, intent(in) :: enabled !! Whether to enable or disable lighting.
+    call offrame_setlightsourceenabled_c(to_c(enabled))
+    end subroutine offrame_setlightsourceenabled
+
+!****************************************************************************************************
+!>
+!  Enable and manage per-frame lighting.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_getlightsourceenabled(enabled)
+    logical, intent(out) :: enabled !! Whether to enable or disable lighting.
+    logical(c_bool) :: cenabled
+    call offrame_getlightsourceenabled_c(cenabled)
+    enabled = to_f(cenabled)
+    end subroutine offrame_getlightsourceenabled
+
+!****************************************************************************************************
+!>
+!  Enable and manage per-frame lighting.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlightambient(r, g, b)
+    real(real32), intent(in) :: r !! Red component of specified light type.
+    real(real32), intent(in) :: g !! Green component of specified light type.
+    real(real32), intent(in) :: b !! Blue component of specified light type.
+    call offrame_setlightambient_c(to_c(r), to_c(g), to_c(b))
+    end subroutine offrame_setlightambient
+
+!****************************************************************************************************
+!>
+!  Enable and manage per-frame lighting.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlightdiffuse(r, g, b)
+    real(real32), intent(in) :: r !! Red component of specified light type.
+    real(real32), intent(in) :: g !! Green component of specified light type.
+    real(real32), intent(in) :: b !! Blue component of specified light type.
+    call offrame_setlightdiffuse_c(to_c(r), to_c(g), to_c(b))
+    end subroutine offrame_setlightdiffuse
+
+!****************************************************************************************************
+!>
+!  Enable and manage per-frame lighting.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_setlightspecular(r, g, b)
+    real(real32), intent(in) :: r !! Red component of specified light type.
+    real(real32), intent(in) :: g !! Green component of specified light type.
+    real(real32), intent(in) :: b !! Blue component of specified light type.
+    call offrame_setlightspecular_c(to_c(r), to_c(g), to_c(b))
+    end subroutine offrame_setlightspecular
+
+!****************************************************************************************************
+!>
+!  Have this frame follow the specified trajectory.
+!
+!  The name used is the one used in the trajectories creation in [[oftraj_create]].
+!
+!  This applies to the current active ReferenceFrame.
+!
+    subroutine offrame_followtrajectory(name)
+    character(len=*), intent(in) :: name !! Name of the trajectory to follow.
+    call offrame_followtrajectory_c(to_c(name))
+    end subroutine offrame_followtrajectory
+
+!****************************************************************************************************
+!>
+!  Follow the trajectory's position, attitude, or both, and set the follow mode.
+!
+!  The function [[offrame_followtrajectory]] must be called before this function.
+!
+!  This applies to the current active ReferenceFrame.
+!
+    subroutine offrame_followtype(data, mode)
+    integer(int32), intent(in) :: data !! Set whether to follow position and/or velocity (see `OpenFrames::TrajectoryFollower::FollowData`).
+    integer(int32), intent(in) :: mode !! Set the follow mode to loop repeatedly or to limit to the times added to the trajectory (see `OpenFrames::TrajectoryFollower::FollowMode`).
+    call offrame_followtype_c(to_c(data), to_c(mode))
+    end subroutine offrame_followtype
+
+!****************************************************************************************************
+!>
+!  Set the elements to follow position.
+!
+!  Each of src, element, opt, and scale must be 3-element arrays, with one element for each x/y/z source.
+!
+!  The function [[offrame_followtrajectory]] must be called before this function.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_followposition(src, element, opt, scale)
+    integer(int32), dimension(3), intent(in) :: src !! Set data source for each axis (see `OpenFrames::Trajectory::SourceType`).
+    integer(int32), dimension(3), intent(in) :: element !! Set which element to follow.
+    integer(int32), dimension(3), intent(in) :: opt !! Set which optional to follow.
+    real(real64), dimension(3), intent(in) :: scale !! Set the scale for each axis.
+    call offrame_followposition_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine offrame_followposition
+
+!****************************************************************************************************
+!>
+!  Print (to std::out) a formatted string of the current ReferenceFrame's descendant hierarchy.
+!
+!  This applies to the current active ReferenceFrame.
+
+    subroutine offrame_printframestring()
+    call offrame_printframestring_c()
+    end subroutine offrame_printframestring
+
+    ! Sphere functions
+
+!****************************************************************************************************
+!>
+!  Create a new Sphere with the given name.
+!
+!  This new Sphere will also become the current active one.
+!
+!@note A Sphere is a type of ReferenceFrame, so all the above ReferenceFrame
+!      functions also apply to a Sphere.  In addition, to operate on a Sphere
+!      you must first set it as the currently active ReferenceFrame by using
+!      [[offrame_activate]] (just like for any other ReferenceFrame).
+
+    subroutine ofsphere_create(name)
+    character(len=*), intent(in) :: name !! Name of the sphere to create.
+    call ofsphere_create_c(to_c(name))
+    end subroutine ofsphere_create
+
+!****************************************************************************************************
+!>
+!  Set the radius of the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setradius(radius)
+    real(real64), intent(in) :: radius !! Radius of the sphere.
+    call ofsphere_setradius_c(to_c(radius))
+    end subroutine ofsphere_setradius
+
+!****************************************************************************************************
+!>
+!  Set the image file used as the texture map for the sphere.
+!
+!  See the OpenSceneGraph documentation for supported file types.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_settexturemap(fname)
+    character(len=*), intent(in) :: fname
+    call ofsphere_settexturemap_c(to_c(fname))
+    end subroutine ofsphere_settexturemap
+
+!****************************************************************************************************
+!>
+!  Set the image file used as the night texture map for the sphere.
+!
+!  See the OpenSceneGraph documentation for supported file types.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setnighttexturemap(fname)
+    character(len=*), intent(in) :: fname !! File containing the night texture map.
+    call ofsphere_setnighttexturemap_c(to_c(fname))
+    end subroutine ofsphere_setnighttexturemap
+
+!****************************************************************************************************
+!>
+!  Enable/disable auto level of detailing for the sphere.
+!
+!  This applies to the current active Sphere.
+!
+    subroutine ofsphere_setautolod(lod)
+    logical, intent(in) :: lod !! True to enable auto level of detailing, false to disable.
+    call ofsphere_setautolod_c(to_c(lod))
+    end subroutine ofsphere_setautolod
+
+!****************************************************************************************************
+!>
+!  Set position of the sphere (within its own reference frame).
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setsphereposition(x, y, z)
+    real(real64), intent(in) :: x !! X position.
+    real(real64), intent(in) :: y !! Y position.
+    real(real64), intent(in) :: z !! Z position.
+    call ofsphere_setsphereposition_c(to_c(x), to_c(y), to_c(z))
+    end subroutine ofsphere_setsphereposition
+
+!****************************************************************************************************
+!>
+!  Set attitude of the sphere (within its own reference frame).
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setsphereattitude(rx, ry, rz, angle)
+    real(real64), intent(in) :: rx !! X component of the rotation quaternion.
+    real(real64), intent(in) :: ry !! Y component of the rotation quaternion.
+    real(real64), intent(in) :: rz !! Z component of the rotation quaternion.
+    real(real64), intent(in) :: angle !! Angle component of the rotation quaternion.
+    call ofsphere_setsphereattitude_c(to_c(rx), to_c(ry), to_c(rz), to_c(angle))
+    end subroutine ofsphere_setsphereattitude
+
+!****************************************************************************************************
+!>
+!  Set the scale of the sphere (to turn sphere into ellipsoid).
+!  This applies to the current active Sphere, and can be used to turn a Sphere into an ellipsoid.
+
+    subroutine ofsphere_setspherescale(sx, sy, sz)
+    real(real64), intent(in) :: sx !! X scale.
+    real(real64), intent(in) :: sy !! Y scale.
+    real(real64), intent(in) :: sz !! Z scale.
+    call ofsphere_setspherescale_c(to_c(sx), to_c(sy), to_c(sz))
+    end subroutine ofsphere_setspherescale
+
+!****************************************************************************************************
+!>
+!  Set material parameters for the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setmaterialambient(r, g, b)
+    real(real32), intent(in) :: r !! Red component of reflectivity for given component.
+    real(real32), intent(in) :: g !! Green component of reflectivity for given component.
+    real(real32), intent(in) :: b !! Blue component of reflectivity for given component.
+    call ofsphere_setmaterialambient_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofsphere_setmaterialambient
+
+!****************************************************************************************************
+!>
+!  Set material parameters for the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setmaterialdiffuse(r, g, b)
+    real(real32), intent(in) :: r !! Red component of reflectivity for given component.
+    real(real32), intent(in) :: g !! Green component of reflectivity for given component.
+    real(real32), intent(in) :: b !! Blue component of reflectivity for given component.
+    call ofsphere_setmaterialdiffuse_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofsphere_setmaterialdiffuse
+
+!****************************************************************************************************
+!>
+!  Set material parameters for the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setmaterialspecular(r, g, b)
+    real(real32), intent(in) :: r !! Red component of reflectivity for given component.
+    real(real32), intent(in) :: g !! Green component of reflectivity for given component.
+    real(real32), intent(in) :: b !! Blue component of reflectivity for given component.
+    call ofsphere_setmaterialspecular_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofsphere_setmaterialspecular
+
+!****************************************************************************************************
+!>
+!  Set material parameters for the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setmaterialemission(r, g, b)
+    real(real32), intent(in) :: r !! Red component of reflectivity for given component.
+    real(real32), intent(in) :: g !! Green component of reflectivity for given component.
+    real(real32), intent(in) :: b !! Blue component of reflectivity for given component.
+    call ofsphere_setmaterialemission_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofsphere_setmaterialemission
+
+!****************************************************************************************************
+!>
+!  Set material parameters for the sphere.
+!
+!  This applies to the current active Sphere.
+
+    subroutine ofsphere_setmaterialshininess(shininess)
+    real(real32), intent(in) :: shininess !! Specular shininess for given component.
+    call ofsphere_setmaterialshininess_c(to_c(shininess))
+    end subroutine ofsphere_setmaterialshininess
+
+    ! Model Functions
+
+!****************************************************************************************************
+!>
+!  Create a new Model with the given name.
+!
+!  This new Model will also become the current active one.
+!
+!@note A Model displays a 3D model (specified in an external file) in the scene.
+!      See the OpenSceneGraph documentation for allowable model file formats.
+!      A Model is a type of ReferenceFrame, so all the above ReferenceFrame
+!      functions also apply to it. In addition, to operate on a Model
+!      you must first set it as the currently active ReferenceFrame by using
+!      [[offrame_activate]] (just like for any other ReferenceFrame).
+
+    subroutine ofmodel_create(name)
+    character(len=*), intent(in) :: name
+    call ofmodel_create_c(to_c(name))
+    end subroutine ofmodel_create
+
+!****************************************************************************************************
+!>
+!  Set the 3D model to be displayed.
+!
+!  See the OpenSceneGraph documentation for supported model types.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_setmodel(fname)
+    character(len=*), intent(in) :: fname !! File containing the 3D model.
+    call ofmodel_setmodel_c(to_c(fname))
+    end subroutine ofmodel_setmodel
+
+!****************************************************************************************************
+!>
+!  Set the position wrt the local origin of the current model.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_setmodelposition(x, y, z)
+    real(real64), intent(in) :: x !! X position.
+    real(real64), intent(in) :: y !! Y position.
+    real(real64), intent(in) :: z !! Z position.
+    call ofmodel_setmodelposition_c(to_c(x), to_c(y), to_c(z))
+    end subroutine ofmodel_setmodelposition
+
+!****************************************************************************************************
+!>
+!  Get the position wrt the local origin of the current model.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_getmodelposition(x, y, z)
+    real(real64), intent(out) :: x !! X position.
+    real(real64), intent(out) :: y !! Y position.
+    real(real64), intent(out) :: z !! Z position.
+    real(c_double) :: cx, cy, cz
+    call ofmodel_getmodelposition_c(cx, cy, cz)
+    x = to_f(cx)
+    y = to_f(cy)
+    z = to_f(cz)
+    end subroutine ofmodel_getmodelposition
+
+!****************************************************************************************************
+!>
+!  Set the scale wrt the local origin of the current model.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_setmodelscale(x, y, z)
+    real(real64), intent(in) :: x !! Scale along X axis.
+    real(real64), intent(in) :: y !! Scale along Y axis.
+    real(real64), intent(in) :: z !! Scale along Z axis.
+    call ofmodel_setmodelscale_c(to_c(x), to_c(y), to_c(z))
+    end subroutine ofmodel_setmodelscale
+
+!****************************************************************************************************
+!>
+!  Get the scale wrt the local origin of the current model.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_getmodelscale(x, y, z)
+    real(real64), intent(out) :: x !! Returned scale along X axis.
+    real(real64), intent(out) :: y !! Returned scale along Y axis.
+    real(real64), intent(out) :: z !! Returned scale along Z axis.
+    real(c_double) :: cx, cy, cz
+    call ofmodel_getmodelscale_c(cx, cy, cz)
+    x = to_f(cx)
+    y = to_f(cy)
+    z = to_f(cz)
+    end subroutine ofmodel_getmodelscale
+
+!****************************************************************************************************
+!>
+!  Set the model pivot point wrt the local origin of the current model.
+!
+!  This is the point about which all rotations and scales take place.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_setmodelpivot(x, y, z)
+    real(real64), intent(in) :: x !! X position of pivot point.
+    real(real64), intent(in) :: y !! Y position of pivot point.
+    real(real64), intent(in) :: z !! Z position of pivot point.
+    call ofmodel_setmodelpivot_c(to_c(x), to_c(y), to_c(z))
+    end subroutine ofmodel_setmodelpivot
+
+!****************************************************************************************************
+!>
+!  Get the position wrt the local origin of the current model.
+!
+!  This is the point about which all rotations and scales take place.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_getmodelpivot(x, y, z)
+    real(real64), intent(out) :: x !! Returned X position of pivot point.
+    real(real64), intent(out) :: y !! Returned Y position of pivot point.
+    real(real64), intent(out) :: z !! Returned Z position of pivot point.
+    real(c_double) :: cx, cy, cz
+    call ofmodel_getmodelpivot_c(cx, cy, cz)
+    x = to_f(cx)
+    y = to_f(cy)
+    z = to_f(cz)
+    end subroutine ofmodel_getmodelpivot
+
+!****************************************************************************************************
+!>
+!  Get the size of the model.
+!
+!  This is the radius of the model's bounding sphere.
+!
+!  This applies to the current active Model.
+
+    subroutine ofmodel_getmodelsize(size)
+    real(real64), intent(out) :: size !! Returned size of the model.
+    real(c_double) :: csize
+    call ofmodel_getmodelsize_c(csize)
+    size = to_f(csize)
+    end subroutine ofmodel_getmodelsize
+
+    ! DrawableTrajectory functions
+
+!****************************************************************************************************
+!>
+!  Create a new DrawableTrajectory with the given name.
+!
+!  This new DrawableTrajectory will also become the current active one.
+!
+!@note A DrawableTrajectory allows a TrajectoryArtist to do its drawing.
+!      A DrawableTrajectory is a type of ReferenceFrame, so all the above ReferenceFrame
+!      functions also apply to it.  In addition, to operate on a DrawableTrajectory
+!      you must first set it as the currently active ReferenceFrame by using
+!      [[offrame_activate]] (just like for any other ReferenceFrame).
+
+    subroutine ofdrawtraj_create(name)
+    character(len=*), intent(in) :: name !! Name of the drawable trajectory to create.
+    call ofdrawtraj_create_c(to_c(name))
+    end subroutine ofdrawtraj_create
+
+!****************************************************************************************************
+!>
+!  Allow specified TrajectoryArtist to draw using this DrawableTrajectory.
+!
+!  Note that the currently active TrajectoryArtist will NOT be changed.
+!
+!  This applies to the current active DrawableTrajectory.
+
+    subroutine ofdrawtraj_addartist(name)
+    character(len=*), intent(in) :: name !! Name of the trajectory artist to draw this DrawableTrajectory.
+    call ofdrawtraj_addartist_c(to_c(name))
+    end subroutine ofdrawtraj_addartist
+
+!****************************************************************************************************
+!>
+!  Remove specified artist from the current DrawableTrajectory.
+!
+!  Note that the currently active TrajectoryArtist will NOT be changed.
+!
+!  This applies to the current active DrawableTrajectory.
+
+    subroutine ofdrawtraj_removeartist(name)
+    character(len=*), intent(in) :: name !! Name of the trajectory artist to be removed from this DrawableTrajectory.
+    call ofdrawtraj_removeartist_c(to_c(name))
+    end subroutine ofdrawtraj_removeartist
+
+!****************************************************************************************************
+!>
+!  Remove all artists from the current DrawableTrajectory.
+!
+!  This applies to the current active DrawableTrajectory.
+
+    subroutine ofdrawtraj_removeallartists()
+    call ofdrawtraj_removeallartists_c()
+    end subroutine ofdrawtraj_removeallartists
+
+    ! CoordinateAxes functions
+
+!****************************************************************************************************
+!>
+!  Create a new CoordinateAxes with the given name.
+!
+!  This new CoordinateAxes will also become the current active one.
+!
+!@note A CoordinateAxis is a ReferenceFrame that draws x/y/z axes at its origin,
+!      and allows for variably spaced major and minor tick marks.
+
+    subroutine ofcoordaxes_create(name)
+    character(len=*), intent(in) :: name !! Name of the coordinate axes to create.
+    call ofcoordaxes_create_c(to_c(name))
+    end subroutine ofcoordaxes_create
+
+!****************************************************************************************************
+!>
+!  Sets the length of the axis.
+!
+!  This applies to the current active CoordinateAxes.
+
+    subroutine ofcoordaxes_setaxislength(len)
+    real(real64), intent(in) :: len !! Axis length.
+    call ofcoordaxes_setaxislength_c(to_c(len))
+    end subroutine ofcoordaxes_setaxislength
+
+!****************************************************************************************************
+!>
+!  Sets the width of the axes.
+!
+!  This applies to the current active CoordinateAxes.
+
+    subroutine ofcoordaxes_setaxiswidth(width)
+    real(real32), intent(in) :: width !! Axis width.
+    call ofcoordaxes_setaxiswidth_c(to_c(width))
+    end subroutine ofcoordaxes_setaxiswidth
+
+!****************************************************************************************************
+!>
+!  Sets which axis to draw.
+!
+!  To show multiple axis components, sum the enumerations of `OpenFrames::ReferenceFrame::AxesType` you want to show.
+!
+!  This applies to the current active CoordinateAxes.
+!
+    subroutine ofcoordaxes_setdrawaxes(axes)
+    integer(int32), intent(in) :: axes !! Axis components to show specified by `OpenFrames::ReferenceFrame::AxesType`, others will be hidden.
+    call ofcoordaxes_setdrawaxes_c(to_c(axes))
+    end subroutine ofcoordaxes_setdrawaxes
+
+!****************************************************************************************************
+!>
+!  Sets the major and minor tick spacing.
+!
+!  This applies to the current active CoordinateAxes.
+
+    subroutine ofcoordaxes_settickspacing(major, minor)
+    real(real64), intent(in) :: major !! Major tick spacing.
+    real(real64), intent(in) :: minor !! Major tick spacing.
+    call ofcoordaxes_settickspacing_c(to_c(major), to_c(minor))
+    end subroutine ofcoordaxes_settickspacing
+
+!****************************************************************************************************
+!>
+!  Sets the major and minor tick size.
+!
+!  This applies to the current active CoordinateAxes.
+
+    subroutine ofcoordaxes_setticksize(major, minor)
+    integer(int32), intent(in) :: major !! Major tick size.
+    integer(int32), intent(in) :: minor !! Major tick size.
+    call ofcoordaxes_setticksize_c(to_c(major), to_c(minor))
+    end subroutine ofcoordaxes_setticksize
+
+!****************************************************************************************************
+!>
+!  Sets an image to be used for the tick, overriding any existing shader.
+!
+!  If an empty string is provided, the tick marker is reset.
+!
+!  This applies to the current active CoordinateAxes.
+!
+    subroutine ofcoordaxes_settickimage(fname)
+    character(len=*), intent(in) :: fname !! File containing the image.
+    call ofcoordaxes_settickimage_c(to_c(fname))
+    end subroutine ofcoordaxes_settickimage
+
+!****************************************************************************************************
+!>
+!  Set GLSL fragment shader used to draw tick mark, overriding any existing image.
+!
+!  If an empty string is provided, the tick marker is reset.
+!
+!  This applies to the current active CoordinateAxes.
+
+    subroutine ofcoordaxes_settickshader(fname)
+    character(len=*), intent(in) :: fname !! File containing the shader source.
+    call ofcoordaxes_settickshader_c(to_c(fname))
+    end subroutine ofcoordaxes_settickshader
+
+    ! LatLonGrid functions
+
+!****************************************************************************************************
+!>
+!  Create a new LatLonGrid with the given name.
+!
+!  This new LatLonGrid will also become the current active one.
+!
+!@note A LatLonGrid is a ReferenceFrame that draws a spherical latitude/longitude
+!      grid with specified radius and line spacings.
+
+    subroutine oflatlongrid_create(name)
+    character(len=*), intent(in) :: name
+    call oflatlongrid_create_c(to_c(name))
+    end subroutine oflatlongrid_create
+
+!****************************************************************************************************
+!>
+!  Sets the parameters of the LatLonGrid.
+!
+!  This applies to the current active LatLonGrid.
+
+    subroutine oflatlongrid_setparameters(radiusx, radiusy, radiusz, latspace, lonspace)
+    real(real64), intent(in) :: radiusx !! Radius of the grid in the X direction.
+    real(real64), intent(in) :: radiusy !! Radius of the grid in the Y direction.
+    real(real64), intent(in) :: radiusz !! Radius of the grid in the Z direction.
+    real(real64), intent(in) :: latspace !! Spacing between latitude grid lines in radians.
+    real(real64), intent(in) :: lonspace !! Spacing between longitude grid lines in radians.
+    call oflatlongrid_setparameters_c(to_c(radiusx), to_c(radiusy), to_c(radiusz), to_c(latspace), to_c(lonspace))
+    end subroutine oflatlongrid_setparameters
+
+    ! RadialPlane functions
+
+!****************************************************************************************************
+!>
+!  Create a new RadialPlane with the given name.
+!
+!  This new RadialPlane will also become the current active one.
+!
+!@note A RadialPlane is a ReferenceFrame that draws a circular X/Y plane with
+!      specified radius, radial circle distance, and longitude line spacing.
+
+    subroutine ofradialplane_create(name)
+    character(len=*), intent(in) :: name !! Name of the radial plane to create.
+    call ofradialplane_create_c(to_c(name))
+    end subroutine ofradialplane_create
+
+!****************************************************************************************************
+!>
+!  Sets the parameters of the RadialPlane.
+!
+!  This applies to the current active RadialPlane.
+
+    subroutine ofradialplane_setparameters(radius, radspace, lonspace)
+    real(real64), intent(in) :: radius !! Radius of the radial plane.
+    real(real64), intent(in) :: radspace !! Spacing between radial grid lines in radians.
+    real(real64), intent(in) :: lonspace !! Spacing between longitude grid lines in radians.
+    call ofradialplane_setparameters_c(to_c(radius), to_c(radspace), to_c(lonspace))
+    end subroutine ofradialplane_setparameters
+
+!****************************************************************************************************
+!>
+!  Set the plane color of the current radial plane.
+!
+!  This applies to the current active RadialPlane.
+
+    subroutine ofradialplane_setplanecolor(r, g, b, a)
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    real(real32), intent(in) :: a !! Alpha (transparancy) component [0-1].
+    call ofradialplane_setplanecolor_c(to_c(r), to_c(g), to_c(b), to_c(a))
+    end subroutine ofradialplane_setplanecolor
+
+!****************************************************************************************************
+!>
+!  Set the line color of the current radial plane.
+!
+!  This applies to the current active RadialPlane.
+
+    subroutine ofradialplane_setlinecolor(r, g, b, a)
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    real(real32), intent(in) :: a !! Alpha (transparancy) component [0-1].
+    call ofradialplane_setlinecolor_c(to_c(r), to_c(g), to_c(b), to_c(a))
+    end subroutine ofradialplane_setlinecolor
+
+    ! Trajectory functions
+
+!****************************************************************************************************
+!>
+!  Set the currently-active trajectory.
+
+    subroutine oftraj_activate(name)
+    character(len=*), intent(in) :: name !! Name of the Trajectory to activate.
+    call oftraj_activate_c(to_c(name))
+    end subroutine oftraj_activate
+
+!****************************************************************************************************
+!>
+!  Create a new Trajectory with the given name.
+!
+!  This new Trajectory will also become the current active one.
+!
+!  This applies to the current active Trajectory.
+
+    subroutine oftraj_create(name, dof, numopt)
+    character(len=*), intent(in) :: name !! Name of the trajectory to create.
+    integer(int32), intent(in) :: dof !! Number of degrees of freedom this trajectory has.
+    integer(int32), intent(in) :: numopt !! Number of optionals this trajectory has.
+    call oftraj_create_c(to_c(name), to_c(dof), to_c(numopt))
+    end subroutine oftraj_create
+
+!****************************************************************************************************
+!>
+!  Change the number of optionals for the currently active Trajectory.
+!
+!  Each optional has an x/y/z component added.
+!
+!  This applies to the current active Trajectory.
+
+    subroutine oftraj_setnumoptionals(nopt)
+    integer(int32), intent(in) :: nopt !! Number of optional coordinates to set.
+    call oftraj_setnumoptionals_c(to_c(nopt))
+    end subroutine oftraj_setnumoptionals
+
+!****************************************************************************************************
+!>
+!  Change the degrees of freedom for the currently-active Trajectory.
+!
+!  This applies to the current active Trajectory.
+
+    subroutine oftraj_setdof(dof)
+    integer(int32), intent(in) :: dof !! Desired number of degrees of freedom.
+    call oftraj_setdof_c(to_c(dof))
+    end subroutine oftraj_setdof
+
+!****************************************************************************************************
+!>
+!  Add a time to the current trajectory.
+!
+!  This applies to the current active Trajectory.
+!
+!  Future positions/attitudes/optionals added to this trajectory will correspond to this time until a new call to [[oftraj_addtime]].
+
+    subroutine oftraj_addtime(t)
+    real(real64), intent(in) :: t !! Time.
+    call oftraj_addtime_c(to_c(t))
+    end subroutine oftraj_addtime
+
+!****************************************************************************************************
+!>
+!  Add a position to the current trajectory.
+!
+!  Add a position as long as the new number of positions will not exceed
+!   the current number of times. Note that for 2D trajectories, the z
+!  component will be ignored.
+!
+!  This position corresponds to the most recent time provided by [[oftraj_addtime]].
+!
+!@warning If multiple positions are added after the previous call to [[oftraj_addtime]],
+!         all but the last position will be overwritten.
+
+    subroutine oftraj_addposition(x, y, z)
+    real(real64), intent(in) :: x !! X position.
+    real(real64), intent(in) :: y !! Y position.
+    real(real64), intent(in) :: z !! Z position.
+    call oftraj_addposition_c(to_c(x), to_c(y), to_c(z))
+    end subroutine oftraj_addposition
+
+!****************************************************************************************************
+!>
+!  Add a position to the current trajectory.
+!
+!  This applies to the current active Trajectory.
+!
+!  This position corresponds to the most recent time provided by [[oftraj_addtime]].
+
+    subroutine oftraj_addpositionvec(pos)
+    real(real64), dimension(:), intent(in) :: pos !! Position array to add (length 3).
+    call oftraj_addpositionvec_c(to_c(pos))
+    end subroutine oftraj_addpositionvec
+
+!****************************************************************************************************
+!>
+!  Add an attitude to the current trajectory.
+!
+!  This applies to the current active Trajectory. It is ignored if the new
+!  number of attitudes will exceed the current number of times.
+!  The attitude is given as a 4-element quaternion.
+!
+    subroutine oftraj_addattitude(x, y, z, w)
+    real(real64), intent(in) :: x !! X component of the rotation quaternion.
+    real(real64), intent(in) :: y !! Y component of the rotation quaternion.
+    real(real64), intent(in) :: z !! Z component of the rotation quaternion.
+    real(real64), intent(in) :: w !! Angle component of the rotation quaternion.
+    call oftraj_addattitude_c(to_c(x), to_c(y), to_c(z), to_c(w))
+    end subroutine oftraj_addattitude
+
+!****************************************************************************************************
+!>
+!  Set the attitude of the current trajectory.
+!
+!  This applies to the current active Trajectory.
+
+    subroutine oftraj_addattitudevec(att)
+    real(real64), dimension(4), intent(in) :: att !! Quaternion array to add (length 4). The vector component of the quaternion precedes the scalar component.
+    call oftraj_addattitudevec_c(to_c(att))
+    end subroutine oftraj_addattitudevec
+
+!****************************************************************************************************
+!>
+!  Set the optional with the given index, for the most recently-added position.
+!
+!  This applies to the current active Trajectory.
+!  The index must be in the range [0, num optionals - 1].
+!
+!  This optional corresponds to the most recent time provided by [[oftraj_addtime]].
+
+    subroutine oftraj_setoptional(index, x, y, z)
+    integer(int32), intent(in) :: index !! index of optional to add values to.
+    real(real64), intent(in) :: x !! X component of optional.
+    real(real64), intent(in) :: y !! Y component of optional.
+    real(real64), intent(in) :: z !! Z component of optional.
+    call oftraj_setoptional_c(to_c(index), to_c(x), to_c(y), to_c(z))
+    end subroutine oftraj_setoptional
+
+!****************************************************************************************************
+!>
+!  Set the optional with the given index, for the most recently added position.
+!
+!  This applies to the current active Trajectory.
+!  Here the optional is given as a 2 or 3 element vector.
+!
+!  This optional corresponds to the most recent time provided by [[oftraj_addtime]].
+
+    subroutine oftraj_setoptionalvec(index, opt)
+    integer(int32), intent(in) :: index !! index of optional to add values to.
+    real(real64), dimension(:), intent(in) :: opt !! Array of values to add to optional (length 3).
+    call oftraj_setoptionalvec_c(to_c(index), to_c(opt))
+    end subroutine oftraj_setoptionalvec
+
+!****************************************************************************************************
+!>
+!  Clear all points from the currently active Trajectory.
+!
+!  This applies to the current active Trajectory.
+
+    subroutine oftraj_clear()
+    call oftraj_clear_c()
+    end subroutine oftraj_clear
+
+!****************************************************************************************************
+!>
+!  Inform drawable trajectories to redraw this trajectory.
+!
+!  This is only necessary to call if [[oftraj_autoinformartists]] has been set to false. By default, the artists are informed every time data is added.
+!
+!  This applies to the current active Trajectory and all the TrajectoryArtists that are linked to it.
+
+    subroutine oftraj_informartists()
+    call oftraj_informartists_c()
+    end subroutine oftraj_informartists
+
+!****************************************************************************************************
+!>
+!  Inform drawable trajecotries to redraw this trajectory.
+!
+!  If this function is not called, the default is to automatically inform the artists.
+!
+!  If auto-inform is disabled, the artists will still be automatically informed if the data is cleared, or the number of optional coordinates is modified.
+!
+!  This applies to the current active Trajectory and all the TrajectoryArtists that are linked to it.
+
+    subroutine oftraj_autoinformartists(autoinform)
+    logical, intent(in) :: autoinform !! True to auto-inform linked artists when data is added to this trajectory.
+                                      !! False to not inform  artists unless [[oftraj_autoinformartists]] is called.
+    call oftraj_autoinformartists_c(to_c(autoinform))
+    end subroutine oftraj_autoinformartists
+
+    ! TrajectoryArtist functions
+
+!****************************************************************************************************
+!>
+!  Set the currently active trajectory artist.
+!
+!@note A TrajectoryArtist graphically interprets the data contained in a
+!      Trajectory. Since it is not a ReferenceFrame, it must be attached
+!      to a DrawableTrajectory before it can be added to a scene. Note that
+!      you cannot create a TrajectoryArtist by itself. You must create one
+!      of its derived types (eg CurveArtist etc...).
+    subroutine oftrajartist_activate(name)
+    character(len=*), intent(in) :: name !! Name of the TrajectoryArtist to activate.
+    call oftrajartist_activate_c(to_c(name))
+    end subroutine oftrajartist_activate
+
+!****************************************************************************************************
+!>
+!  Set the currently-active trajectory artist.
+
+    subroutine oftrajartist_settrajectory()
+    call oftrajartist_settrajectory_c()
+    end subroutine oftrajartist_settrajectory
+
+    ! CurveArtist functions
+
+!****************************************************************************************************
+!>
+!  Create a new CurveArtist with the given name.
+!
+!  This new CurveArtist will also become the current active one.
+!
+!@note A CurveArtist is a type of TrajectoryArtist that allows arbitrary
+!      Trajectory data to be used for plotting (x,y,z) points. Since it
+!      is a type of Trajectory, a CurveArtist has all Trajectory functions
+!      available to it.
+
+    subroutine ofcurveartist_create(name)
+    character(len=*), intent(in) :: name !! me of the curve artist to create.
+    call ofcurveartist_create_c(to_c(name))
+    end subroutine ofcurveartist_create
+
+!****************************************************************************************************
+!>
+!  Set the data used for X coordinates of each point.
+!
+!  This applies to the current active CurveArtist.
+
+    subroutine ofcurveartist_setxdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofcurveartist_setxdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofcurveartist_setxdata
+
+!****************************************************************************************************
+!>
+!  Set the data used for Y coordinates of each point.
+!
+!  This applies to the current active CurveArtist.
+
+    subroutine ofcurveartist_setydata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofcurveartist_setydata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofcurveartist_setydata
+
+!****************************************************************************************************
+!>
+!  Set the data used for Z coordinates of each point.
+!
+!  This applies to the current active CurveArtist.
+
+    subroutine ofcurveartist_setzdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofcurveartist_setzdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofcurveartist_setzdata
+
+!****************************************************************************************************
+!>
+!  Set the color of the current curve artist.
+!
+!  This applies to the current active CurveArtist.
+
+    subroutine ofcurveartist_setcolor(r, g, b)
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    call ofcurveartist_setcolor_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofcurveartist_setcolor
+
+!****************************************************************************************************
+!>
+!  Set the width of the current curve artist.
+!
+!  This applies to the current active CurveArtist.
+
+    subroutine ofcurveartist_setwidth(width)
+    real(real32), intent(in) :: width !! Width of the line.
+    call ofcurveartist_setwidth_c(to_c(width))
+    end subroutine ofcurveartist_setwidth
+
+!****************************************************************************************************
+!>
+!  Set the line pattern of the current curve artist.
+!
+!  This applies to the current active CurveArtist.
+!
+!  For valid factors and patterns, see `OpenGL::glLineStipple()`.
+
+    subroutine ofcurveartist_setpattern(factor, pattern)
+    integer(int32), intent(in) :: factor !! Specifies scaling factor used to draw the pattern.
+    integer(int16), intent(in) :: pattern !! 16-bit integer which specifies the line pattern.
+    call ofcurveartist_setpattern_c(to_c(factor), to_c(pattern))
+    end subroutine ofcurveartist_setpattern
+
+    ! SegmentArtist functions
+
+!****************************************************************************************************
+!>
+!  Create a new SegmentArtist with the given name.
+!
+!  This new SegmentArtist will also become the current active one.
+!
+!@note A SegmentArtist is a type of TrajectoryArtist that allows arbitrary
+!      Trajectory data to be used for plotting line segments. Since it
+!      is a type of Trajectory, a SegmentArtist has all Trajectory functions
+!      available to it.
+
+    subroutine ofsegmentartist_create(name)
+    character(len=*), intent(in) :: name
+    call ofsegmentartist_create_c(to_c(name))
+    end subroutine ofsegmentartist_create
+
+!****************************************************************************************************
+!>
+!  Set the data used for starting X coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setstartxdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setstartxdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setstartxdata
+
+!****************************************************************************************************
+!>
+!  Set the data used for starting Y coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setstartydata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setstartydata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setstartydata
+
+!****************************************************************************************************
+!>
+!  Set the data used for starting Z coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setstartzdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setstartzdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setstartzdata
+
+!****************************************************************************************************
+!>
+!  Set the data used for ending X coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setendxdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setendxdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setendxdata
+
+!****************************************************************************************************
+!>
+!  Set the data used for ending Y coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setendydata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setendydata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setendydata
+
+!****************************************************************************************************
+!>
+!  Set the data used for ending Z coordinate of each segment.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setendzdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofsegmentartist_setendzdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofsegmentartist_setendzdata
+
+!****************************************************************************************************
+!>
+!  Set the offset between drawn points.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setstride(stride)
+    integer(int32), intent(in) :: stride !! Minimum offset between sucessive drawn points.
+    call ofsegmentartist_setstride_c(to_c(stride))
+    end subroutine ofsegmentartist_setstride
+
+!****************************************************************************************************
+!>
+!  Set the color of the current segment artist.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setcolor(r, g, b)
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    call ofsegmentartist_setcolor_c(to_c(r), to_c(g), to_c(b))
+    end subroutine ofsegmentartist_setcolor
+
+!****************************************************************************************************
+!>
+!  Set the width of the current segment artist.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setwidth(width)
+    real(real32), intent(in) :: width !! Width of the line.
+    call ofsegmentartist_setwidth_c(to_c(width))
+    end subroutine ofsegmentartist_setwidth
+
+!****************************************************************************************************
+!>
+!  Set the line pattern of the current segment artist.
+!
+!  For valid factors and patterns, see `OpenGL::glLineStipple()`.
+!
+!  This applies to the current active SegmentArtist.
+
+    subroutine ofsegmentartist_setpattern(factor, pattern)
+    integer(int32), intent(in) :: factor !! Specifies scaling factor used to draw the pattern.
+    integer(int16), intent(in) :: pattern !! 16-bit integer which specifies the line pattern.
+    call ofsegmentartist_setpattern_c(to_c(factor), to_c(pattern))
+    end subroutine ofsegmentartist_setpattern
+
+    ! MarkerArtist functions
+
+!****************************************************************************************************
+!>
+!  Create a new MarkerArtist with the given name.
+!
+!  This new MarkerArtist will also become the current active one.
+!
+!@note A MarkerArtist is a type of TrajectoryArtist that plots markers at the
+!      start/end of a trajectory. The marker style can be customized.
+
+    subroutine ofmarkerartist_create(name)
+    character(len=*), intent(in) :: name
+    call ofmarkerartist_create_c(to_c(name))
+    end subroutine ofmarkerartist_create
+
+!****************************************************************************************************
+!>
+!  Set the data used for X coordinates of each point.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setxdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofmarkerartist_setxdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofmarkerartist_setxdata
+
+!****************************************************************************************************
+!>
+!  Set the data used for Y coordinates of each point.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setydata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofmarkerartist_setydata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofmarkerartist_setydata
+
+!****************************************************************************************************
+!>
+!  Set the data used for Z coordinates of each point.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setzdata(src, element, opt, scale)
+    integer(int32), intent(in) :: src !! Type of data source to draw (see `OpenFrames::Trajectory::SourceType` enum).
+    integer(int32), intent(in) :: element !! Array index of the data indicated in src to plot.
+    integer(int32), intent(in) :: opt !! Indicate if a position or optional is plotted. 0 is for position,
+                                      !! other values indicate the index of the optional to use. Only used if src = POSOPT.
+    real(real64), intent(in) :: scale !! Scale factor to apply to drawn trajectory data.
+    call ofmarkerartist_setzdata_c(to_c(src), to_c(element), to_c(opt), to_c(scale))
+    end subroutine ofmarkerartist_setzdata
+
+!****************************************************************************************************
+!>
+!  Define which markers should be plotted for the current marker artist.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setmarkers(markers)
+    integer(int32), intent(in) :: markers !! Indicates which data points should be drawn as markers (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
+    call ofmarkerartist_setmarkers_c(to_c(markers))
+    end subroutine ofmarkerartist_setmarkers
+
+!****************************************************************************************************
+!>
+!  Set the color of the current marker artist.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setmarkercolor(markers, r, g, b)
+    integer(int32), intent(in) :: markers !! The markers whose color should be set (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
+    real(real32), intent(in) :: r !! Red color component [0-1].
+    real(real32), intent(in) :: g !! Green color component [0-1].
+    real(real32), intent(in) :: b !! Blue color component [0-1].
+    call ofmarkerartist_setmarkercolor_c(to_c(markers), to_c(r), to_c(g), to_c(b))
+    end subroutine ofmarkerartist_setmarkercolor
+
+!****************************************************************************************************
+!>
+!  Set image used as marker, overriding any existing shader.
+!
+!  If an empty string is given, then use default circular point.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setmarkerimage(fname)
+    character(len=*), intent(in) :: fname !! File containing the image.
+    call ofmarkerartist_setmarkerimage_c(to_c(fname))
+    end subroutine ofmarkerartist_setmarkerimage
+
+!****************************************************************************************************
+!>
+!  Set GLSL fragment shader used to draw marker, overriding any existing image.
+!
+!  If an empty string is given, then use default circular point.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setmarkershader(fname)
+    character(len=*), intent(in) :: fname !! File containing the shader source.
+    call ofmarkerartist_setmarkershader_c(to_c(fname))
+    end subroutine ofmarkerartist_setmarkershader
+
+!****************************************************************************************************
+!>
+!  Specify which type of intermediate markers should be drawn.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setintermediatetype(type)
+    integer(int32), intent(in) :: type !! Indicates how intermediate marker spacing is determined (see: `OpenFrames::MarkerArtist::IntermediateType` enum).
+    call ofmarkerartist_setintermediatetype_c(to_c(type))
+    end subroutine ofmarkerartist_setintermediatetype
+
+!****************************************************************************************************
+!>
+!  Specify the spacing used for intermediate markers.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setintermediatespacing(spacing)
+    real(real64), intent(in) :: spacing !! Set spacing for intermediate markers.
+    call ofmarkerartist_setintermediatespacing_c(to_c(spacing))
+    end subroutine ofmarkerartist_setintermediatespacing
+
+!****************************************************************************************************
+!>
+!  Specify the drawing direction (from start or end) of intermediate markers.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setintermediatedirection(direction)
+    integer(int32), intent(in) :: direction !! Set intermediate marker direction (see: `OpenFrames::MarkerArtist::DrawnMarkers` enum).
+    call ofmarkerartist_setintermediatedirection_c(to_c(direction))
+    end subroutine ofmarkerartist_setintermediatedirection
+
+!****************************************************************************************************
+!>
+!  Specify the marker size in pixels.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setmarkersize(size)
+    integer(int32), intent(in) :: size !! The marker size.
+    call ofmarkerartist_setmarkersize_c(to_c(size))
+    end subroutine ofmarkerartist_setmarkersize
+
+!****************************************************************************************************
+!>
+!  Specify whether marker size should be automatically attenuated.
+!
+!  This applies to the current active MarkerArtist.
+
+    subroutine ofmarkerartist_setautoattenuate(autoattenuate)
+    logical, intent(in) :: autoattenuate !! True to automatically attenuate marker size, False otherwise.
+    call ofmarkerartist_setautoattenuate_c(to_c(autoattenuate))
+    end subroutine ofmarkerartist_setautoattenuate
+
+    ! View functions
+
+!****************************************************************************************************
+!>
+!  Set the currently active view.
+
+    subroutine ofview_activate(name)
+    character(len=*), intent(in) :: name !! Name of the View to activate.
+    call ofview_activate_c(to_c(name))
+    end subroutine ofview_activate
+
+!****************************************************************************************************
+!>
+!  Create a new View with the given name.
+!
+!  This new View will also become the current active one.
+!
+!@note A View represents the "camera" that looks at a scene. It controls the
+!      projection (like the lens of the camera) and modelview (like the position
+!      of the camera) matrices. Views are added to grid positions in a WindowProxy,
+!      and multiple Views are allowed for each grid position.
+
+    subroutine ofview_create(name)
+    character(len=*), intent(in) :: name !! Name of the view to create.
+    call ofview_create_c(to_c(name))
+    end subroutine ofview_create
+
+!****************************************************************************************************
+!>
+!  Set an orthographic projection with the given bounds.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_setorthographic(left, right, bottom, top)
+    real(real64), intent(in) :: left !! Left coordinate bound of orthographic projection.
+    real(real64), intent(in) :: right !! Right coordinate bound of orthographic projection.
+    real(real64), intent(in) :: bottom !! Bottom coordinate bound of orthographic projection.
+    real(real64), intent(in) :: top !! Top coordinate bound of orthographic projection.
+    call ofview_setorthographic_c(to_c(left), to_c(right), to_c(bottom), to_c(top))
+    end subroutine ofview_setorthographic
+
+!****************************************************************************************************
+!>
+!  Set the current view to use a symmetric perspective projection.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_setperspective(fov, ratio)
+    real(real64), intent(in) :: fov !! Vertical field of view (in degrees).
+    real(real64), intent(in) :: ratio !! x/y aspect ratio.
+    call ofview_setperspective_c(to_c(fov), to_c(ratio))
+    end subroutine ofview_setperspective
+
+!****************************************************************************************************
+!>
+!  Tell current view to follow the specified ReferenceFrame.
+!
+!  The 'root' input should be set to the root of the ReferenceFrame heirarchy, and the
+!  'frame' input should be set to whatever frame you want to view. Note that
+!  this function does NOT use or modify the currently active ReferenceFrame.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_setviewframe(root, frame)
+    character(len=*), intent(in) :: root !! Name of the root of the ReferenceFrame heirarchy.
+    character(len=*), intent(in) :: frame !! ReferenceFrame to follow with this view.
+    call ofview_setviewframe_c(to_c(root), to_c(frame))
+    end subroutine ofview_setviewframe
+
+!****************************************************************************************************
+!>
+!  View from one frame towards another, using a specified frame type and rotation type.
+!
+!  The 'root' input should be set to the root of the ReferenceFrame
+!  heirarchy, and must contain 'srcframe' and 'dstframe'. Note that
+!  this function does NOT use or modify the currently active ReferenceFrame.
+!
+!  This applies to the current active View.
+!
+!  See: `OpenFrames::View::ViewFrameType` and `OpenFrames::View::ViewRotationType`.
+
+    subroutine ofview_setviewbetweenframes(root, srcframe, dstframe, frametype, rotationtype)
+    character(len=*), intent(in) :: root !! Name of the root of the ReferenceFrame heirarchy. Note: Must contain 'srcframe' and 'dstframe'.
+    character(len=*), intent(in) :: srcframe !! ReferenceFrame this view will look from.
+    character(len=*), intent(in) :: dstframe !! ReferenceFrame this view will look towards.
+    integer(int32), intent(in) :: frameType !! Frame type to use (see: `OpenFrames::View::ViewFrameType` enum)
+    integer(int32), intent(in) :: rotationType !! Rotation type to use when following dstframe (see: `OpenFrames::View::ViewRotationType` enum).
+    call ofview_setviewbetweenframes_c(to_c(root), to_c(srcframe), to_c(dstframe), to_c(frametype), to_c(rotationtype))
+    end subroutine ofview_setviewbetweenframes
+
+!****************************************************************************************************
+!>
+!  Set the default view distance.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_setdefaultviewdistance(distance)
+    real(real64), intent(in) :: distance !! Distance the camera is from the terget point of the reference frame.
+                                         !! A value <= 0.0 means the distance should be auto-computed.
+    call ofview_setdefaultviewdistance_c(to_c(distance))
+    end subroutine ofview_setdefaultviewdistance
+
+!****************************************************************************************************
+!>
+!  Get the trackball's view matrix.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_gettrackball(eye, center, up)
+    real(real64),dimension(3), intent(out) :: eye !! 3-vector eye position.
+    real(real64),dimension(3), intent(out) :: center !! 3-vector look-at position.
+    real(real64),dimension(3), intent(out) :: up !! 3-vector up vector.
+    real(c_double),dimension(3) :: ceye, ccenter, cup
+    call ofview_gettrackball_c(ceye, ccenter, cup)
+    eye = to_f(ceye)
+    center = to_f(ccenter)
+    up = to_f(cup)
+    end subroutine ofview_gettrackball
+
+!****************************************************************************************************
+!>
+!  Set the trackball view matrix.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_settrackball(eye, center, up)
+    real(real64),dimension(3), intent(in) :: eye !! 3-vector eye position.
+    real(real64),dimension(3), intent(in) :: center !! 3-vector look-at position.
+    real(real64),dimension(3), intent(in) :: up !! 3-vector up vector.
+    call ofview_settrackball_c(to_c(eye), to_c(center), to_c(up))
+    end subroutine ofview_settrackball
+
+!****************************************************************************************************
+!>
+!  Check if the view frame for the current View is valid.
+!
+!  One reason for an invalid view is if the frame to be viewed is not a child of the specified root frame.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_isvalid(valid)
+    logical, intent(out) :: valid !! Returned value if the view is valid.
+    logical(c_bool) :: cvalid
+    call ofview_isvalid_c(cvalid)
+    valid = to_f(cvalid)
+    end subroutine ofview_isvalid
+
+!****************************************************************************************************
+!>
+!  Reset the view to its default state.
+!
+!  This applies to the current active View.
+
+    subroutine ofview_reset()
+    call ofview_reset_c()
+    end subroutine ofview_reset
+
+!****************************************************************************************************
+    end module openframes_module
+!****************************************************************************************************

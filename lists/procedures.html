@@ -1,0 +1,1251 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Modern Fortran interface to OpenFrames realtime interactive scientific visualization API">
+    <meta name="author" content="Jacob Williams" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>All Procedures &ndash; openframes-fortran
+</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">openframes-fortran </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../sourcefile/openframes_module.f90.html">Source File</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12" id='text'>
+			 <h1>Procedures</h1>
+			 <table class="table table-striped">
+			 <thead><tr><th>Procedure</th><th>Location</th><th>Procedure Type</th><th>Description</th></tr></thead>
+			 <tbody>
+			   <tr>
+                 <td><a href='../proc/of_adddatafilepath.html'>of_adddatafilepath</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add a search path when OSG tries to load data files.</p><a href="../proc/of_adddatafilepath.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/of_cleanup.html'>of_cleanup</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>cleans up all internal openframes fortran/c interface variables
+  must be called when done using openframes
+  afterwards, the only way to continue using openframes is to
+  first make another call to <a href="../proc/of_initialize.html">of_initialize</a></p><a href="../proc/of_cleanup.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/of_getreturnedvalue.html'>of_getreturnedvalue</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the return value returned by the most recent API function call.</p><a href="../proc/of_getreturnedvalue.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/of_initialize.html'>of_initialize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>sets up all internal openframes fortran/c interface variables
+must be called before other openframes calls</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_create.html'>ofcoordaxes_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new CoordinateAxes with the given name.</p><a href="../proc/ofcoordaxes_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_setaxislength.html'>ofcoordaxes_setaxislength</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the length of the axis.</p><a href="../proc/ofcoordaxes_setaxislength.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_setaxiswidth.html'>ofcoordaxes_setaxiswidth</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the width of the axes.</p><a href="../proc/ofcoordaxes_setaxiswidth.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_setdrawaxes.html'>ofcoordaxes_setdrawaxes</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets which axis to draw.</p><a href="../proc/ofcoordaxes_setdrawaxes.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_settickimage.html'>ofcoordaxes_settickimage</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets an image to be used for the tick, overriding any existing shader.</p><a href="../proc/ofcoordaxes_settickimage.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_settickshader.html'>ofcoordaxes_settickshader</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set GLSL fragment shader used to draw tick mark, overriding any existing image.</p><a href="../proc/ofcoordaxes_settickshader.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_setticksize.html'>ofcoordaxes_setticksize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the major and minor tick size.</p><a href="../proc/ofcoordaxes_setticksize.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcoordaxes_settickspacing.html'>ofcoordaxes_settickspacing</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the major and minor tick spacing.</p><a href="../proc/ofcoordaxes_settickspacing.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_create.html'>ofcurveartist_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new CurveArtist with the given name.</p><a href="../proc/ofcurveartist_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setcolor.html'>ofcurveartist_setcolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the color of the current curve artist.</p><a href="../proc/ofcurveartist_setcolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setpattern.html'>ofcurveartist_setpattern</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the line pattern of the current curve artist.</p><a href="../proc/ofcurveartist_setpattern.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setwidth.html'>ofcurveartist_setwidth</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the width of the current curve artist.</p><a href="../proc/ofcurveartist_setwidth.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setxdata.html'>ofcurveartist_setxdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for X coordinates of each point.</p><a href="../proc/ofcurveartist_setxdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setydata.html'>ofcurveartist_setydata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for Y coordinates of each point.</p><a href="../proc/ofcurveartist_setydata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofcurveartist_setzdata.html'>ofcurveartist_setzdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for Z coordinates of each point.</p><a href="../proc/ofcurveartist_setzdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofdrawtraj_addartist.html'>ofdrawtraj_addartist</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Allow specified TrajectoryArtist to draw using this DrawableTrajectory.</p><a href="../proc/ofdrawtraj_addartist.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofdrawtraj_create.html'>ofdrawtraj_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new DrawableTrajectory with the given name.</p><a href="../proc/ofdrawtraj_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofdrawtraj_removeallartists.html'>ofdrawtraj_removeallartists</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove all artists from the current DrawableTrajectory.</p><a href="../proc/ofdrawtraj_removeallartists.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofdrawtraj_removeartist.html'>ofdrawtraj_removeartist</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove specified artist from the current DrawableTrajectory.</p><a href="../proc/ofdrawtraj_removeartist.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offm_activate.html'>offm_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently active FrameManager.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offm_create.html'>offm_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new FrameManager with the given ID.</p><a href="../proc/offm_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offm_lock.html'>offm_lock</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Lock the current FrameManager.</p><a href="../proc/offm_lock.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offm_setframe.html'>offm_setframe</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Assign a ReferenceFrame to the FrameManager.</p><a href="../proc/offm_setframe.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offm_unlock.html'>offm_unlock</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Unlock the current FrameManager.</p><a href="../proc/offm_unlock.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_activate.html'>offrame_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently active reference frame.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_addchild.html'>offrame_addchild</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>*
+  Add a child frame to the current frame.</p><a href="../proc/offrame_addchild.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_create.html'>offrame_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new ReferenceFrame with the given name.</p><a href="../proc/offrame_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_followposition.html'>offrame_followposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the elements to follow position.</p><a href="../proc/offrame_followposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_followtrajectory.html'>offrame_followtrajectory</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Have this frame follow the specified trajectory.</p><a href="../proc/offrame_followtrajectory.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_followtype.html'>offrame_followtype</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Follow the trajectory's position, attitude, or both, and set the follow mode.</p><a href="../proc/offrame_followtype.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_getattitude.html'>offrame_getattitude</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the attitude of the current frame.</p><a href="../proc/offrame_getattitude.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_getlightsourceenabled.html'>offrame_getlightsourceenabled</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable and manage per-frame lighting.</p><a href="../proc/offrame_getlightsourceenabled.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_getnumchildren.html'>offrame_getnumchildren</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the number of child frames in the current frame.</p><a href="../proc/offrame_getnumchildren.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_getposition.html'>offrame_getposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the position of the current frame.</p><a href="../proc/offrame_getposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_movexaxis.html'>offrame_movexaxis</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Reposition and resize the x component of the coordinate axis.</p><a href="../proc/offrame_movexaxis.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_moveyaxis.html'>offrame_moveyaxis</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Reposition and resize the y component of the coordinate axis.</p><a href="../proc/offrame_moveyaxis.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_movezaxis.html'>offrame_movezaxis</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Reposition and resize the z component of the coordinate axis.</p><a href="../proc/offrame_movezaxis.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_printframestring.html'>offrame_printframestring</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Print (to std::out) a formatted string of the current ReferenceFrame's descendant hierarchy.</p><a href="../proc/offrame_printframestring.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_removeallchildren.html'>offrame_removeallchildren</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove all child frames from the current frame.</p><a href="../proc/offrame_removeallchildren.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_removechild.html'>offrame_removechild</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove a child frame from the current frame.</p><a href="../proc/offrame_removechild.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setattitude.html'>offrame_setattitude</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the attitude of the current frame.</p><a href="../proc/offrame_setattitude.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setaxeslabels.html'>offrame_setaxeslabels</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Change the axes labels for the current ReferenceFrame.</p><a href="../proc/offrame_setaxeslabels.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setcolor.html'>offrame_setcolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the color of the current frame.</p><a href="../proc/offrame_setcolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlabelfont.html'>offrame_setlabelfont</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the label font for the current ReferenceFrame.</p><a href="../proc/offrame_setlabelfont.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlabelsize.html'>offrame_setlabelsize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the label size for the current ReferenceFrame.</p><a href="../proc/offrame_setlabelsize.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlightambient.html'>offrame_setlightambient</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable and manage per-frame lighting.</p><a href="../proc/offrame_setlightambient.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlightdiffuse.html'>offrame_setlightdiffuse</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable and manage per-frame lighting.</p><a href="../proc/offrame_setlightdiffuse.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlightsourceenabled.html'>offrame_setlightsourceenabled</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable and manage per-frame lighting.</p><a href="../proc/offrame_setlightsourceenabled.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setlightspecular.html'>offrame_setlightspecular</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable and manage per-frame lighting.</p><a href="../proc/offrame_setlightspecular.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setnamelabel.html'>offrame_setnamelabel</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Change the name label for the current ReferenceFrame.</p><a href="../proc/offrame_setnamelabel.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_setposition.html'>offrame_setposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the position of the current frame.</p><a href="../proc/offrame_setposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_showaxes.html'>offrame_showaxes</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Toggle which axis components are displayed.</p><a href="../proc/offrame_showaxes.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_showaxeslabels.html'>offrame_showaxeslabels</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Toggle which axis labels are displayed.</p><a href="../proc/offrame_showaxeslabels.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/offrame_shownamelabel.html'>offrame_shownamelabel</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Toggle display of the name label of the frame.</p><a href="../proc/offrame_shownamelabel.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oflatlongrid_create.html'>oflatlongrid_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new LatLonGrid with the given name.</p><a href="../proc/oflatlongrid_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oflatlongrid_setparameters.html'>oflatlongrid_setparameters</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the parameters of the LatLonGrid.</p><a href="../proc/oflatlongrid_setparameters.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_create.html'>ofmarkerartist_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new MarkerArtist with the given name.</p><a href="../proc/ofmarkerartist_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setautoattenuate.html'>ofmarkerartist_setautoattenuate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Specify whether marker size should be automatically attenuated.</p><a href="../proc/ofmarkerartist_setautoattenuate.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setintermediatedirection.html'>ofmarkerartist_setintermediatedirection</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Specify the drawing direction (from start or end) of intermediate markers.</p><a href="../proc/ofmarkerartist_setintermediatedirection.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setintermediatespacing.html'>ofmarkerartist_setintermediatespacing</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Specify the spacing used for intermediate markers.</p><a href="../proc/ofmarkerartist_setintermediatespacing.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setintermediatetype.html'>ofmarkerartist_setintermediatetype</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Specify which type of intermediate markers should be drawn.</p><a href="../proc/ofmarkerartist_setintermediatetype.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setmarkercolor.html'>ofmarkerartist_setmarkercolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the color of the current marker artist.</p><a href="../proc/ofmarkerartist_setmarkercolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setmarkerimage.html'>ofmarkerartist_setmarkerimage</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set image used as marker, overriding any existing shader.</p><a href="../proc/ofmarkerartist_setmarkerimage.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setmarkers.html'>ofmarkerartist_setmarkers</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Define which markers should be plotted for the current marker artist.</p><a href="../proc/ofmarkerartist_setmarkers.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setmarkershader.html'>ofmarkerartist_setmarkershader</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set GLSL fragment shader used to draw marker, overriding any existing image.</p><a href="../proc/ofmarkerartist_setmarkershader.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setmarkersize.html'>ofmarkerartist_setmarkersize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Specify the marker size in pixels.</p><a href="../proc/ofmarkerartist_setmarkersize.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setxdata.html'>ofmarkerartist_setxdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for X coordinates of each point.</p><a href="../proc/ofmarkerartist_setxdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setydata.html'>ofmarkerartist_setydata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for Y coordinates of each point.</p><a href="../proc/ofmarkerartist_setydata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmarkerartist_setzdata.html'>ofmarkerartist_setzdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for Z coordinates of each point.</p><a href="../proc/ofmarkerartist_setzdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_create.html'>ofmodel_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new Model with the given name.</p><a href="../proc/ofmodel_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_getmodelpivot.html'>ofmodel_getmodelpivot</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the position wrt the local origin of the current model.</p><a href="../proc/ofmodel_getmodelpivot.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_getmodelposition.html'>ofmodel_getmodelposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the position wrt the local origin of the current model.</p><a href="../proc/ofmodel_getmodelposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_getmodelscale.html'>ofmodel_getmodelscale</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the scale wrt the local origin of the current model.</p><a href="../proc/ofmodel_getmodelscale.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_getmodelsize.html'>ofmodel_getmodelsize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the size of the model.</p><a href="../proc/ofmodel_getmodelsize.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_setmodel.html'>ofmodel_setmodel</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the 3D model to be displayed.</p><a href="../proc/ofmodel_setmodel.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_setmodelpivot.html'>ofmodel_setmodelpivot</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the model pivot point wrt the local origin of the current model.</p><a href="../proc/ofmodel_setmodelpivot.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_setmodelposition.html'>ofmodel_setmodelposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the position wrt the local origin of the current model.</p><a href="../proc/ofmodel_setmodelposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofmodel_setmodelscale.html'>ofmodel_setmodelscale</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the scale wrt the local origin of the current model.</p><a href="../proc/ofmodel_setmodelscale.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofradialplane_create.html'>ofradialplane_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new RadialPlane with the given name.</p><a href="../proc/ofradialplane_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofradialplane_setlinecolor.html'>ofradialplane_setlinecolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the line color of the current radial plane.</p><a href="../proc/ofradialplane_setlinecolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofradialplane_setparameters.html'>ofradialplane_setparameters</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Sets the parameters of the RadialPlane.</p><a href="../proc/ofradialplane_setparameters.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofradialplane_setplanecolor.html'>ofradialplane_setplanecolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the plane color of the current radial plane.</p><a href="../proc/ofradialplane_setplanecolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_create.html'>ofsegmentartist_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new SegmentArtist with the given name.</p><a href="../proc/ofsegmentartist_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setcolor.html'>ofsegmentartist_setcolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the color of the current segment artist.</p><a href="../proc/ofsegmentartist_setcolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setendxdata.html'>ofsegmentartist_setendxdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for ending X coordinate of each segment.</p><a href="../proc/ofsegmentartist_setendxdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setendydata.html'>ofsegmentartist_setendydata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for ending Y coordinate of each segment.</p><a href="../proc/ofsegmentartist_setendydata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setendzdata.html'>ofsegmentartist_setendzdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for ending Z coordinate of each segment.</p><a href="../proc/ofsegmentartist_setendzdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setpattern.html'>ofsegmentartist_setpattern</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the line pattern of the current segment artist.</p><a href="../proc/ofsegmentartist_setpattern.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setstartxdata.html'>ofsegmentartist_setstartxdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for starting X coordinate of each segment.</p><a href="../proc/ofsegmentartist_setstartxdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setstartydata.html'>ofsegmentartist_setstartydata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for starting Y coordinate of each segment.</p><a href="../proc/ofsegmentartist_setstartydata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setstartzdata.html'>ofsegmentartist_setstartzdata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the data used for starting Z coordinate of each segment.</p><a href="../proc/ofsegmentartist_setstartzdata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setstride.html'>ofsegmentartist_setstride</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the offset between drawn points.</p><a href="../proc/ofsegmentartist_setstride.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsegmentartist_setwidth.html'>ofsegmentartist_setwidth</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the width of the current segment artist.</p><a href="../proc/ofsegmentartist_setwidth.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_create.html'>ofsphere_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new Sphere with the given name.</p><a href="../proc/ofsphere_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setautolod.html'>ofsphere_setautolod</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable/disable auto level of detailing for the sphere.</p><a href="../proc/ofsphere_setautolod.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setmaterialambient.html'>ofsphere_setmaterialambient</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set material parameters for the sphere.</p><a href="../proc/ofsphere_setmaterialambient.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setmaterialdiffuse.html'>ofsphere_setmaterialdiffuse</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set material parameters for the sphere.</p><a href="../proc/ofsphere_setmaterialdiffuse.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setmaterialemission.html'>ofsphere_setmaterialemission</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set material parameters for the sphere.</p><a href="../proc/ofsphere_setmaterialemission.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setmaterialshininess.html'>ofsphere_setmaterialshininess</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set material parameters for the sphere.</p><a href="../proc/ofsphere_setmaterialshininess.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setmaterialspecular.html'>ofsphere_setmaterialspecular</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set material parameters for the sphere.</p><a href="../proc/ofsphere_setmaterialspecular.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setnighttexturemap.html'>ofsphere_setnighttexturemap</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the image file used as the night texture map for the sphere.</p><a href="../proc/ofsphere_setnighttexturemap.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setradius.html'>ofsphere_setradius</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the radius of the sphere.</p><a href="../proc/ofsphere_setradius.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setsphereattitude.html'>ofsphere_setsphereattitude</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set attitude of the sphere (within its own reference frame).</p><a href="../proc/ofsphere_setsphereattitude.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setsphereposition.html'>ofsphere_setsphereposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set position of the sphere (within its own reference frame).</p><a href="../proc/ofsphere_setsphereposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_setspherescale.html'>ofsphere_setspherescale</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the scale of the sphere (to turn sphere into ellipsoid).
+This applies to the current active Sphere, and can be used to turn a Sphere into an ellipsoid.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofsphere_settexturemap.html'>ofsphere_settexturemap</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the image file used as the texture map for the sphere.</p><a href="../proc/ofsphere_settexturemap.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_activate.html'>oftraj_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently-active trajectory.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_addattitude.html'>oftraj_addattitude</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add an attitude to the current trajectory.</p><a href="../proc/oftraj_addattitude.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_addattitudevec.html'>oftraj_addattitudevec</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the attitude of the current trajectory.</p><a href="../proc/oftraj_addattitudevec.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_addposition.html'>oftraj_addposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add a position to the current trajectory.</p><a href="../proc/oftraj_addposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_addpositionvec.html'>oftraj_addpositionvec</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add a position to the current trajectory.</p><a href="../proc/oftraj_addpositionvec.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_addtime.html'>oftraj_addtime</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add a time to the current trajectory.</p><a href="../proc/oftraj_addtime.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_autoinformartists.html'>oftraj_autoinformartists</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Inform drawable trajecotries to redraw this trajectory.</p><a href="../proc/oftraj_autoinformartists.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_clear.html'>oftraj_clear</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Clear all points from the currently active Trajectory.</p><a href="../proc/oftraj_clear.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_create.html'>oftraj_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new Trajectory with the given name.</p><a href="../proc/oftraj_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_informartists.html'>oftraj_informartists</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Inform drawable trajectories to redraw this trajectory.</p><a href="../proc/oftraj_informartists.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_setdof.html'>oftraj_setdof</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Change the degrees of freedom for the currently-active Trajectory.</p><a href="../proc/oftraj_setdof.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_setnumoptionals.html'>oftraj_setnumoptionals</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Change the number of optionals for the currently active Trajectory.</p><a href="../proc/oftraj_setnumoptionals.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_setoptional.html'>oftraj_setoptional</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the optional with the given index, for the most recently-added position.</p><a href="../proc/oftraj_setoptional.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftraj_setoptionalvec.html'>oftraj_setoptionalvec</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the optional with the given index, for the most recently added position.</p><a href="../proc/oftraj_setoptionalvec.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftrajartist_activate.html'>oftrajartist_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently active trajectory artist.</p><a href="../proc/oftrajartist_activate.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/oftrajartist_settrajectory.html'>oftrajartist_settrajectory</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently-active trajectory artist.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_activate.html'>ofview_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the currently active view.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_create.html'>ofview_create</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new View with the given name.</p><a href="../proc/ofview_create.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_gettrackball.html'>ofview_gettrackball</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the trackball's view matrix.</p><a href="../proc/ofview_gettrackball.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_isvalid.html'>ofview_isvalid</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Check if the view frame for the current View is valid.</p><a href="../proc/ofview_isvalid.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_reset.html'>ofview_reset</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Reset the view to its default state.</p><a href="../proc/ofview_reset.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_setdefaultviewdistance.html'>ofview_setdefaultviewdistance</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the default view distance.</p><a href="../proc/ofview_setdefaultviewdistance.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_setorthographic.html'>ofview_setorthographic</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set an orthographic projection with the given bounds.</p><a href="../proc/ofview_setorthographic.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_setperspective.html'>ofview_setperspective</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the current view to use a symmetric perspective projection.</p><a href="../proc/ofview_setperspective.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_settrackball.html'>ofview_settrackball</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the trackball view matrix.</p><a href="../proc/ofview_settrackball.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_setviewbetweenframes.html'>ofview_setviewbetweenframes</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>View from one frame towards another, using a specified frame type and rotation type.</p><a href="../proc/ofview_setviewbetweenframes.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofview_setviewframe.html'>ofview_setviewframe</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Tell current view to follow the specified ReferenceFrame.</p><a href="../proc/ofview_setviewframe.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_activate.html'>ofwin_activate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the active WindowProxy</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_addview.html'>ofwin_addview</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Add a view to the window.</p><a href="../proc/ofwin_addview.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_buttonpress.html'>ofwin_buttonpress</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a mouse button pressed event.</p><a href="../proc/ofwin_buttonpress.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_buttonrelease.html'>ofwin_buttonrelease</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a mouse button released event.</p><a href="../proc/ofwin_buttonrelease.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_capturewindow.html'>ofwin_capturewindow</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Capture the next rendered frame.</p><a href="../proc/ofwin_capturewindow.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_createproxy.html'>ofwin_createproxy</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a new WindowProxy that will manage drawing onto a window.
+This new WindowProxy will also become the current active one.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_enablehudtext.html'>ofwin_enablehudtext</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Enable/disable the HUD text for the specified grid position. Create placeholder
+HUD text if it does not yet exist.</p><a href="../proc/ofwin_enablehudtext.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_getid.html'>ofwin_getid</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get ID of the active WindowProxy</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_gettime.html'>ofwin_gettime</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the simulation time.</p><a href="../proc/ofwin_gettime.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_gettimescale.html'>ofwin_gettimescale</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Get the simulation time scale.</p><a href="../proc/ofwin_gettimescale.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_isrunning.html'>ofwin_isrunning</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Check if the animation is running.</p><a href="../proc/ofwin_isrunning.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_istimepaused.html'>ofwin_istimepaused</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Check if time is paused.</p><a href="../proc/ofwin_istimepaused.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_keypress.html'>ofwin_keypress</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a key-pressed event.</p><a href="../proc/ofwin_keypress.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_keyrelease.html'>ofwin_keyrelease</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a key released event.</p><a href="../proc/ofwin_keyrelease.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_mousemotion.html'>ofwin_mousemotion</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Create a mouse-moved event.</p><a href="../proc/ofwin_mousemotion.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_pauseanimation.html'>ofwin_pauseanimation</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Pause/unpause the animation.</p><a href="../proc/ofwin_pauseanimation.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_pausetime.html'>ofwin_pausetime</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set whether to pause time.</p><a href="../proc/ofwin_pausetime.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_removeallviews.html'>ofwin_removeallviews</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove all the view(s) from the window.</p><a href="../proc/ofwin_removeallviews.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_removeview.html'>ofwin_removeview</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Remove a view from the window.</p><a href="../proc/ofwin_removeview.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_resizewindow.html'>ofwin_resizewindow</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Resize the window to a new position and size.</p><a href="../proc/ofwin_resizewindow.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_selectview.html'>ofwin_selectview</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the view currently displayed in the window.</p><a href="../proc/ofwin_selectview.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setbackgroundcolor.html'>ofwin_setbackgroundcolor</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the background color of the specified grid position.</p><a href="../proc/ofwin_setbackgroundcolor.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setbackgroundstardata.html'>ofwin_setbackgroundstardata</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the background star field of the specified grid position.</p><a href="../proc/ofwin_setbackgroundstardata.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setbackgroundtexture.html'>ofwin_setbackgroundtexture</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the background texture of the specified grid position.</p><a href="../proc/ofwin_setbackgroundtexture.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setbuttonpresscallback.html'>ofwin_setbuttonpresscallback</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function to be called on button press.</p><a href="../proc/ofwin_setbuttonpresscallback.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setbuttonreleasecallback.html'>ofwin_setbuttonreleasecallback</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function to be called on button release.</p><a href="../proc/ofwin_setbuttonreleasecallback.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setdesiredframerate.html'>ofwin_setdesiredframerate</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the desired framerate of the window (frames/second).</p><a href="../proc/ofwin_setdesiredframerate.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setgridsize.html'>ofwin_setgridsize</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the number rows and columns in the grid.</p><a href="../proc/ofwin_setgridsize.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_sethudtext.html'>ofwin_sethudtext</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set HUD text. Create placeholder HUD text if it does not yet exist.</p><a href="../proc/ofwin_sethudtext.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_sethudtextfont.html'>ofwin_sethudtextfont</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set HUD font. Create placeholder HUD text if it does not yet exist.</p><a href="../proc/ofwin_sethudtextfont.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_sethudtextparameters.html'>ofwin_sethudtextparameters</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set HUD color and size. Create placeholder HUD text if it does not yet exist.</p><a href="../proc/ofwin_sethudtextparameters.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_sethudtextposition.html'>ofwin_sethudtextposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set HUD text position and alignment. Create placeholder HUD text if it does not yet exist.</p><a href="../proc/ofwin_sethudtextposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setkeypresscallback.html'>ofwin_setkeypresscallback</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function to be called on keypress.</p><a href="../proc/ofwin_setkeypresscallback.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setlightambient.html'>ofwin_setlightambient</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the lighting parameters for the specified grid position.</p><a href="../proc/ofwin_setlightambient.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setlightdiffuse.html'>ofwin_setlightdiffuse</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the lighting parameters for the specified grid position.</p><a href="../proc/ofwin_setlightdiffuse.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setlightposition.html'>ofwin_setlightposition</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the light position for the specified grid position.</p><a href="../proc/ofwin_setlightposition.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setlightspecular.html'>ofwin_setlightspecular</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the lighting parameters for the specified grid position.</p><a href="../proc/ofwin_setlightspecular.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setmakecurrentfunction.html'>ofwin_setmakecurrentfunction</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function for making the OpenGL context current (so it can be drawn on).</p><a href="../proc/ofwin_setmakecurrentfunction.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setmousemotioncallback.html'>ofwin_setmousemotioncallback</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function to be called on mouse motion.</p><a href="../proc/ofwin_setmousemotioncallback.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setscene.html'>ofwin_setscene</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the scene at the specified grid position.</p><a href="../proc/ofwin_setscene.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setstereo.html'>ofwin_setstereo</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the 3D stereo mode for the specified grid position.</p><a href="../proc/ofwin_setstereo.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setswapbuffersfunction.html'>ofwin_setswapbuffersfunction</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function for swapping the front/back buffers.</p><a href="../proc/ofwin_setswapbuffersfunction.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_settime.html'>ofwin_settime</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the simulation time.</p><a href="../proc/ofwin_settime.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_settimescale.html'>ofwin_settimescale</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the simulation time scale.</p><a href="../proc/ofwin_settimescale.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setupdatecontextfunction.html'>ofwin_setupdatecontextfunction</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set a callback function for updating the OpenGL context after qualifying events.</p><a href="../proc/ofwin_setupdatecontextfunction.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setwindowcapturefile.html'>ofwin_setwindowcapturefile</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the file name and type that will be used for window captures.</p><a href="../proc/ofwin_setwindowcapturefile.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setwindowcapturekey.html'>ofwin_setwindowcapturekey</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the key that activates a window capture.</p><a href="../proc/ofwin_setwindowcapturekey.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_setwindowname.html'>ofwin_setwindowname</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Set the window name (title). Only applies to non-embedded windows.</p></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_signalstop.html'>ofwin_signalstop</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Signal animation to stop and return immediately.</p><a href="../proc/ofwin_signalstop.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_start.html'>ofwin_start</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Start animation.</p><a href="../proc/ofwin_start.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_stop.html'>ofwin_stop</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Force animation to stop and wait for the thread to stop.</p><a href="../proc/ofwin_stop.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			   <tr>
+                 <td><a href='../proc/ofwin_waitforstop.html'>ofwin_waitforstop</a></td>
+                 <td><a href='../module/openframes_module.html'>openframes_module</a></td>
+                 <td>Subroutine</td>
+                 <td><p>Wait for user to exit animation.</p><a href="../proc/ofwin_waitforstop.html" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+               </tr>
+			 </tbody></table>
+             
+        </div>
+      </div>
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              openframes-fortran
+ was developed by Jacob Williams<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
